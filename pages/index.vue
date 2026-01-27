@@ -42,6 +42,19 @@ function handleCustomQuestComplete() {
   showCustomQuest.value = false
 }
 
+// Handle navigation from skill tree
+function handleTreeRealmSelect(realm: Section) {
+  selectedRealm.value = realm
+  selectedSubsection.value = null
+  view.value = 'realms'
+}
+
+function handleTreeSubsectionSelect(realm: Section, subsection: Subsection) {
+  selectedRealm.value = realm
+  selectedSubsection.value = subsection
+  view.value = 'realms'
+}
+
 const selectedEntry = computed(() => {
   if (!showEntryDetail.value) return null
   return entries.value.find(e => e.id === showEntryDetail.value)
@@ -75,6 +88,11 @@ const selectedEntry = computed(() => {
         @back="handleBackFromSubsection"
         @select-quest="showQuestModal = $event"
         @custom-quest="showCustomQuest = true"
+      />
+      <SkillTree
+        v-if="view === 'tree'"
+        @select-realm="handleTreeRealmSelect"
+        @select-subsection="handleTreeSubsectionSelect"
       />
       <Logbook
         v-if="view === 'logbook'"
