@@ -4,7 +4,7 @@ export const SECTIONS = [
   { id: 'shire', name: 'The Shire', subtitle: 'Land Systems', icon: '🌾', color: '#eab308', description: 'Tend the gardens and growing things' },
   { id: 'hearth', name: 'The Hearth', subtitle: 'Home & Kitchen', icon: '🔥', color: '#ef4444', description: 'Master the arts of fire and food' },
   { id: 'library', name: 'The Library', subtitle: 'Words & Maps', icon: '📜', color: '#6366f1', description: 'Seek knowledge in ancient tomes' },
-] as const;
+] as const
 
 export const SUBSECTIONS: Record<string, readonly { id: string; name: string; icon: string; description: string }[]> = {
   workshop: [
@@ -42,7 +42,7 @@ export const SUBSECTIONS: Record<string, readonly { id: string; name: string; ic
     { id: 'research', name: 'Research', icon: '🔍', description: 'Investigate and discover' },
     { id: 'languages', name: 'Languages', icon: '🗣️', description: 'Learn tongues old and new' },
   ],
-} as const;
+} as const
 
 export const TIERS = [
   { id: 'wanderer', name: 'Wanderer', rank: 1, description: 'Exploration with capture', xp: 10, stars: 1 },
@@ -50,7 +50,7 @@ export const TIERS = [
   { id: 'wayfarer', name: 'Wayfarer', rank: 3, description: 'Multi-step competence', xp: 50, stars: 3 },
   { id: 'pathfinder', name: 'Pathfinder', rank: 4, description: 'Complex responsibility', xp: 100, stars: 4 },
   { id: 'guide', name: 'Guide', rank: 5, description: 'Generative leadership', xp: 200, stars: 5 },
-] as const;
+] as const
 
 export const TYPES = [
   { id: 'observation', name: 'Observation', icon: '👁️', prompts: ['What did you notice?', 'What pattern did you see?', 'What question do you have now?'] },
@@ -61,7 +61,7 @@ export const TYPES = [
   { id: 'expedition', name: 'Expedition', icon: '🧭', prompts: ['Where did you go?', 'What did you find?', 'What next time?'] },
   { id: 'service', name: 'Service', icon: '🤝', prompts: ['Who did you help?', 'What responsibility?', 'What standard did you aim for?'] },
   { id: 'teaching', name: 'Teaching', icon: '📖', prompts: ['What did you teach?', 'How did they understand it?', 'What would you improve?'] },
-] as const;
+] as const
 
 export const AVATAR_STAGES = [
   { minLevel: 1, name: 'Young Hobbit', description: 'Just beginning the journey' },
@@ -70,7 +70,7 @@ export const AVATAR_STAGES = [
   { minLevel: 8, name: 'Bold Wayfarer', description: 'No trail is too long' },
   { minLevel: 12, name: 'Wise Pathfinder', description: 'Others follow your lead' },
   { minLevel: 18, name: 'Legendary Guide', description: 'Master of all realms' },
-] as const;
+] as const
 
 export const QUESTS = [
   { id: 'shield', title: 'Forge a Shield', description: 'Craft a wooden shield with a proper grip', section: 'workshop', subsection: 'woodworking', type: 'build', tier: 'traveller', image: 'shield' },
@@ -83,39 +83,39 @@ export const QUESTS = [
   { id: 'bread', title: 'The Daily Bread', description: 'Bake a loaf from scratch', section: 'hearth', subsection: 'baking', type: 'build', tier: 'traveller', image: 'bread' },
   { id: 'plant', title: 'Seed to Sprout', description: 'Plant seeds and record their growth', section: 'shire', subsection: 'gardening', type: 'project', tier: 'traveller', image: 'plant' },
   { id: 'map', title: 'Chart the Land', description: 'Draw a map of your surroundings', section: 'library', subsection: 'cartography', type: 'build', tier: 'wayfarer', image: 'map' },
-] as const;
+] as const
 
 // Types
-export type Section = typeof SECTIONS[number];
-export type Subsection = { id: string; name: string; icon: string; description: string };
-export type Tier = typeof TIERS[number];
-export type QuestType = typeof TYPES[number];
-export type Quest = typeof QUESTS[number];
+export type Section = typeof SECTIONS[number]
+export type Subsection = { id: string; name: string; icon: string; description: string }
+export type Tier = typeof TIERS[number]
+export type QuestType = typeof TYPES[number]
+export type Quest = typeof QUESTS[number]
 
 export interface Entry {
-  id: string;
-  timestamp: string;
-  title: string;
-  section: string;
-  subsection: string;
-  type: string;
-  tier: string;
-  questId?: string;
-  image: string;
-  responses: string[];
-  evidence: string[];
-  notes: string;
+  id: string
+  timestamp: string
+  title: string
+  section: string
+  subsection: string
+  type: string
+  tier: string
+  questId?: string
+  image: string
+  responses: string[]
+  evidence: string[]
+  notes: string
 }
 
 // Helper functions
 export function getAvatarStage(level: number) {
   for (let i = AVATAR_STAGES.length - 1; i >= 0; i--) {
-    if (level >= AVATAR_STAGES[i].minLevel) return { ...AVATAR_STAGES[i], index: i };
+    if (level >= AVATAR_STAGES[i].minLevel) return { ...AVATAR_STAGES[i], index: i }
   }
-  return { ...AVATAR_STAGES[0], index: 0 };
+  return { ...AVATAR_STAGES[0], index: 0 }
 }
 
 export function getSubsection(sectionId: string, subsectionId: string) {
-  const subs = SUBSECTIONS[sectionId];
-  return subs?.find(s => s.id === subsectionId);
+  const subs = SUBSECTIONS[sectionId]
+  return subs?.find(s => s.id === subsectionId)
 }
