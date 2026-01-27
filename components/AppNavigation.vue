@@ -23,6 +23,12 @@ function handleRealmClick() {
       <span class="nav-tab-icon">🏰</span>Realms
     </button>
     <button
+      :class="['nav-tab', { active: currentView === 'tree' }]"
+      @click="emit('update:view', 'tree')"
+    >
+      <span class="nav-tab-icon">🌳</span>Tree
+    </button>
+    <button
       :class="['nav-tab', { active: currentView === 'logbook' }]"
       @click="emit('update:view', 'logbook')"
     >
