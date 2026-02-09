@@ -1633,3 +1633,386 @@ body {
   color: var(--text-dim);
   margin-top: .25rem;
 }
+
+/* Project Guide */
+.guide-section {
+  margin-bottom: 2rem;
+  animation: slide-up .5s ease backwards;
+}
+
+.guide-section:nth-child(2) { animation-delay: .1s; }
+.guide-section:nth-child(3) { animation-delay: .15s; }
+.guide-section:nth-child(4) { animation-delay: .2s; }
+.guide-section:nth-child(5) { animation-delay: .25s; }
+.guide-section:nth-child(6) { animation-delay: .3s; }
+.guide-section:nth-child(7) { animation-delay: .35s; }
+
+.guide-welcome {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.guide-welcome::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(251, 191, 36, .05) 60deg, transparent 120deg);
+  animation: rotate-slow 20s linear infinite;
+}
+
+.guide-welcome-icon {
+  font-size: 3rem;
+  margin-bottom: .75rem;
+  position: relative;
+  animation: float 3s ease-in-out infinite;
+}
+
+.guide-welcome-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  color: var(--gold);
+  margin-bottom: .75rem;
+  position: relative;
+}
+
+.guide-welcome-desc {
+  color: var(--text-dim);
+  font-size: .95rem;
+  line-height: 1.7;
+  max-width: 360px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.guide-heading {
+  font-family: 'Cinzel', serif;
+  font-size: .9rem;
+  color: var(--gold);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: .15em;
+}
+
+.guide-text {
+  color: var(--text-dim);
+  font-size: .9rem;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+/* Getting Started Steps */
+.guide-steps {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.guide-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all .3s ease;
+}
+
+.guide-step:hover {
+  border-color: var(--gold-dim);
+  transform: translateX(4px);
+}
+
+.guide-step-number {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+  border-radius: 50%;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: .9rem;
+  color: var(--bg-dark);
+}
+
+.guide-step-content {
+  flex: 1;
+}
+
+.guide-step-title {
+  font-family: 'Cinzel', serif;
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: .2rem;
+}
+
+.guide-step-desc {
+  font-size: .85rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+/* Realm List */
+.guide-realm-list {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.guide-realm-row {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: all .3s ease;
+}
+
+.guide-realm-row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--realm-color, var(--gold));
+  opacity: .6;
+}
+
+.guide-realm-row:hover {
+  border-color: var(--gold-dim);
+  transform: translateX(4px);
+}
+
+.guide-realm-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+  padding-top: .1rem;
+}
+
+.guide-realm-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.guide-realm-name {
+  font-family: 'Cinzel', serif;
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: .15rem;
+}
+
+.guide-realm-desc {
+  font-size: .8rem;
+  color: var(--text-dim);
+  margin-bottom: .5rem;
+}
+
+.guide-realm-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+}
+
+.guide-skill-tag {
+  font-size: .7rem;
+  padding: .2rem .5rem;
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+/* Tier List */
+.guide-tier-list {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.guide-tier-row {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .85rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all .3s ease;
+}
+
+.guide-tier-row:hover {
+  border-color: var(--gold-dim);
+  transform: translateX(4px);
+}
+
+.guide-tier-stars {
+  display: flex;
+  gap: 1px;
+  flex-shrink: 0;
+  min-width: 3.5rem;
+}
+
+.guide-tier-star {
+  color: var(--gold);
+  font-size: .85rem;
+}
+
+.guide-tier-info {
+  flex: 1;
+}
+
+.guide-tier-name {
+  font-family: 'Cinzel', serif;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.guide-tier-desc {
+  font-size: .75rem;
+  color: var(--text-dim);
+}
+
+.guide-tier-xp {
+  font-family: 'Cinzel', serif;
+  font-size: .8rem;
+  color: var(--gold);
+  padding: .2rem .6rem;
+  background: rgba(251, 191, 36, .1);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+/* Type Grid */
+.guide-type-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: .5rem;
+}
+
+.guide-type-card {
+  text-align: center;
+  padding: .85rem .5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all .3s ease;
+}
+
+.guide-type-card:hover {
+  border-color: var(--gold-dim);
+  transform: translateY(-2px);
+}
+
+.guide-type-icon {
+  font-size: 1.5rem;
+  margin-bottom: .25rem;
+}
+
+.guide-type-name {
+  font-size: .65rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+/* Avatar Progression */
+.guide-avatar-list {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.guide-avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: .85rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all .3s ease;
+}
+
+.guide-avatar-row:hover {
+  border-color: var(--gold-dim);
+  transform: translateX(4px);
+}
+
+.guide-avatar-level {
+  font-family: 'Cinzel', serif;
+  font-size: .75rem;
+  color: var(--gold);
+  padding: .25rem .6rem;
+  background: rgba(251, 191, 36, .1);
+  border-radius: 10px;
+  flex-shrink: 0;
+  min-width: 3rem;
+  text-align: center;
+}
+
+.guide-avatar-info {
+  flex: 1;
+}
+
+.guide-avatar-name {
+  font-family: 'Cinzel', serif;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.guide-avatar-desc {
+  font-size: .75rem;
+  color: var(--text-dim);
+}
+
+/* Tips */
+.guide-tips {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.guide-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+  padding: .85rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: .85rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+  transition: all .3s ease;
+}
+
+.guide-tip:hover {
+  border-color: var(--gold-dim);
+  transform: translateX(4px);
+}
+
+.guide-tip-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  padding-top: .05rem;
+}
