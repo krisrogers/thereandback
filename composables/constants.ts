@@ -83,6 +83,17 @@ export const QUESTS = [
   { id: 'bread', title: 'The Daily Bread', description: 'Bake a loaf from scratch', section: 'hearth', subsection: 'baking', type: 'build', tier: 'traveller', image: 'bread' },
   { id: 'plant', title: 'Seed to Sprout', description: 'Plant seeds and record their growth', section: 'shire', subsection: 'gardening', type: 'project', tier: 'traveller', image: 'plant' },
   { id: 'map', title: 'Chart the Land', description: 'Draw a map of your surroundings', section: 'library', subsection: 'cartography', type: 'build', tier: 'wayfarer', image: 'map' },
+  // Permaculture quests (child-friendly)
+  { id: 'wormworld', title: 'The Worm\'s World', description: 'Dig up a patch of soil and observe the worms that live there', section: 'shire', subsection: 'composting', type: 'observation', tier: 'wanderer', image: 'wormworld' },
+  { id: 'compost', title: 'Compost Treasure', description: 'Start a kitchen scrap compost and record what goes in', section: 'shire', subsection: 'composting', type: 'build', tier: 'wanderer', image: 'compost' },
+  { id: 'mulch', title: 'The Mulch Blanket', description: 'Gather leaves and straw to mulch around your plants', section: 'shire', subsection: 'gardening', type: 'practice', tier: 'wanderer', image: 'mulch' },
+  { id: 'threesisters', title: 'Three Sisters Garden', description: 'Plant corn, beans, and squash together and watch them help each other grow', section: 'shire', subsection: 'gardening', type: 'project', tier: 'traveller', image: 'threesisters' },
+  { id: 'herbspiral', title: 'The Herb Spiral', description: 'Build a spiral-shaped herb garden with stones and soil', section: 'shire', subsection: 'gardening', type: 'build', tier: 'traveller', image: 'herbspiral' },
+  { id: 'raincatch', title: 'Catch the Rain', description: 'Set up a simple rain collector and measure what you catch', section: 'shire', subsection: 'land-management', type: 'build', tier: 'traveller', image: 'raincatch' },
+  { id: 'bugcensus', title: 'The Bug Census', description: 'Count and identify the insects living in your garden', section: 'wilds', subsection: 'wildlife', type: 'observation', tier: 'wanderer', image: 'bugcensus' },
+  { id: 'patterns', title: 'Nature\'s Patterns', description: 'Find spirals, branches, and webs in the wild and sketch them', section: 'wilds', subsection: 'tracking', type: 'observation', tier: 'wanderer', image: 'patterns' },
+  { id: 'forage', title: 'The Forage Basket', description: 'Find and identify three safe edible wild plants with a guide', section: 'wilds', subsection: 'foraging', type: 'expedition', tier: 'traveller', image: 'forage' },
+  { id: 'gardentable', title: 'Garden to Table', description: 'Pick something you grew and cook a meal with it', section: 'hearth', subsection: 'cooking', type: 'practice', tier: 'traveller', image: 'gardentable' },
 ] as const
 
 // Types
