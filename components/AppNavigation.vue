@@ -41,6 +41,12 @@ function handleRealmClick() {
       <span class="nav-tab-icon">⭐</span>Progress
     </button>
     <button
+      :class="['nav-tab', { active: currentView === 'projects' }]"
+      @click="emit('update:view', 'projects')"
+    >
+      <span class="nav-tab-icon">📋</span>Projects
+    </button>
+    <button
       :class="['nav-tab', { active: currentView === 'battle' }]"
       @click="emit('update:view', 'battle')"
     >

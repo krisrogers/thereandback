@@ -118,6 +118,27 @@ export interface Entry {
   notes: string
 }
 
+// Project Management Types
+export interface ProgressNote {
+  id: string
+  timestamp: string
+  note: string
+  evidence: string[]
+}
+
+export interface Project {
+  id: string
+  title: string
+  goal: string
+  instructions: string
+  startedAt: string
+  status: 'planning' | 'in-progress' | 'completed' | 'paused'
+  progressNotes: ProgressNote[]
+  completedAt?: string
+  section?: string
+  subsection?: string
+}
+
 // Helper functions
 export function getAvatarStage(level: number) {
   for (let i = AVATAR_STAGES.length - 1; i >= 0; i--) {

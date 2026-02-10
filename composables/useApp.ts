@@ -1,12 +1,17 @@
 import { ref, computed, watch } from 'vue'
-import { TIERS, getAvatarStage, getPowerUpForCompletion, type Entry, type BattleState, type PowerUp } from './constants'
+import { TIERS, getAvatarStage, getPowerUpForCompletion, type Entry, type BattleState, type PowerUp, type Project, type ProgressNote } from './constants'
 
 const STORAGE_KEY = 'thereAndBack_v5'
 const BATTLE_STORAGE_KEY = 'thereAndBack_battle_v1'
+const PROJECTS_STORAGE_KEY = 'thereAndBack_projects_v1'
 
 // Global state
 const entries = ref<Entry[]>([])
 const isHydrated = ref(false)
+
+// Projects state
+const projects = ref<Project[]>([])
+const isProjectsHydrated = ref(false)
 
 // Battle state
 const battleState = ref<BattleState>({
@@ -50,6 +55,19 @@ export function useApp() {
     isBattleHydrated.value = true
   }
 
+  // Load projects from localStorage
+  if (import.meta.client && !isProjectsHydrated.value) {
+    const storedProjects = localStorage.getItem(PROJECTS_STORAGE_KEY)
+    if (storedProjects) {
+      try {
+        projects.value = JSON.parse(storedProjects)
+      } catch (e) {
+        console.error('Failed to parse stored projects:', e)
+      }
+    }
+    isProjectsHydrated.value = true
+  }
+
   // Watch for changes and save to localStorage
   if (import.meta.client) {
     watch(entries, (newEntries) => {
@@ -61,6 +79,12 @@ export function useApp() {
     watch(battleState, (newBattleState) => {
       if (isBattleHydrated.value) {
         localStorage.setItem(BATTLE_STORAGE_KEY, JSON.stringify(newBattleState))
+      }
+    }, { deep: true })
+
+    watch(projects, (newProjects) => {
+      if (isProjectsHydrated.value) {
+        localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(newProjects))
       }
     }, { deep: true })
   }
@@ -173,6 +197,41 @@ export function useApp() {
     }
   }
 
+  // Project functions
+  const addProject = (project: Omit<Project, 'id' | 'startedAt' | 'progressNotes'>) => {
+    const newProject: Project = {
+      ...project,
+      id: Date.now().toString(),
+      startedAt: new Date().toISOString(),
+      progressNotes: [],
+    }
+    projects.value = [newProject, ...projects.value]
+    return newProject
+  }
+
+  const updateProject = (id: string, updates: Partial<Project>) => {
+    const index = projects.value.findIndex(p => p.id === id)
+    if (index !== -1) {
+      projects.value[index] = { ...projects.value[index], ...updates }
+    }
+  }
+
+  const deleteProject = (id: string) => {
+    projects.value = projects.value.filter(p => p.id !== id)
+  }
+
+  const addProgressNote = (projectId: string, note: Omit<ProgressNote, 'id' | 'timestamp'>) => {
+    const project = projects.value.find(p => p.id === projectId)
+    if (project) {
+      const newNote: ProgressNote = {
+        ...note,
+        id: Date.now().toString(),
+        timestamp: new Date().toISOString(),
+      }
+      project.progressNotes.push(newNote)
+    }
+  }
+
   return {
     entries,
     addEntry,
@@ -190,5 +249,11 @@ export function useApp() {
     takeDamage,
     addPowerUp,
     resetBattleState,
+    // Projects
+    projects,
+    addProject,
+    updateProject,
+    deleteProject,
+    addProgressNote,
   }
 }
