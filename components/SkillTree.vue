@@ -27,18 +27,18 @@ function getRealmXP(sectionId: string) {
     }, 0)
 }
 
-// Tree layout calculations
+// Tree layout calculations - LARGER for game-like feel
 // Center point
-const centerX = 200
-const centerY = 200
+const centerX = 400
+const centerY = 400
 
-// Realm positions (arranged in a circle around center)
-const realmRadius = 110
-const realmNodeSize = 36
+// Realm positions (arranged in a circle around center) - MUCH LARGER
+const realmRadius = 240
+const realmNodeSize = 80
 
-// Subsection positions (branch out from each realm)
-const subsectionRadius = 70
-const subsectionNodeSize = 22
+// Subsection positions (branch out from each realm) - MUCH LARGER
+const subsectionRadius = 160
+const subsectionNodeSize = 50
 
 // Calculate realm positions
 const realmPositions = computed(() => {
@@ -116,7 +116,7 @@ function getSubsectionProgress(sectionId: string, subsectionId: string) {
 
     <div class="tree-container">
       <svg
-        viewBox="0 0 400 400"
+        viewBox="0 0 800 800"
         class="tree-svg"
         preserveAspectRatio="xMidYMid meet"
       >
@@ -176,21 +176,21 @@ function getSubsectionProgress(sectionId: string, subsectionId: string) {
         <!-- Center node (Avatar) -->
         <g class="center-node" :transform="`translate(${centerX}, ${centerY})`">
           <circle
-            r="32"
+            r="60"
             class="center-node-bg"
           />
           <circle
-            r="30"
+            r="56"
             class="center-node-inner"
           />
           <text
-            y="6"
+            y="10"
             class="center-node-level"
           >{{ level }}</text>
           <text
-            y="18"
+            y="30"
             class="center-node-label"
-          >LVL</text>
+          >LEVEL</text>
         </g>
 
         <!-- Subsection nodes -->
@@ -212,12 +212,16 @@ function getSubsectionProgress(sectionId: string, subsectionId: string) {
             class="subsection-node-inner"
           />
           <text
-            y="5"
+            y="6"
             class="subsection-node-icon"
           >{{ sub.subsection.icon }}</text>
           <text
+            y="38"
+            class="subsection-node-label"
+          >{{ sub.subsection.name }}</text>
+          <text
             v-if="sub.count > 0"
-            y="22"
+            y="52"
             class="subsection-node-count"
           >{{ sub.count }}</text>
         </g>
@@ -233,7 +237,7 @@ function getSubsectionProgress(sectionId: string, subsectionId: string) {
           @click="emit('select-realm', realm.section)"
         >
           <circle
-            :r="realmNodeSize / 2 + 4"
+            :r="realmNodeSize / 2 + 6"
             class="realm-node-glow"
           />
           <circle
@@ -241,13 +245,22 @@ function getSubsectionProgress(sectionId: string, subsectionId: string) {
             class="realm-node-bg"
           />
           <circle
-            :r="realmNodeSize / 2 - 2"
+            :r="realmNodeSize / 2 - 3"
             class="realm-node-inner"
           />
           <text
-            y="6"
+            y="8"
             class="realm-node-icon"
           >{{ realm.section.icon }}</text>
+          <text
+            y="55"
+            class="realm-node-label"
+          >{{ realm.section.name }}</text>
+          <text
+            v-if="realm.count > 0"
+            y="70"
+            class="realm-node-count"
+          >{{ realm.count }} quests</text>
         </g>
       </svg>
 
@@ -326,7 +339,8 @@ function getSubsectionProgress(sectionId: string, subsectionId: string) {
   padding: 1rem;
   margin-bottom: 1.5rem;
   position: relative;
-  overflow: hidden;
+  overflow: auto;
+  max-height: 600px;
 }
 
 .tree-container::before {
@@ -342,7 +356,7 @@ function getSubsectionProgress(sectionId: string, subsectionId: string) {
 
 .tree-svg {
   width: 100%;
-  max-width: 400px;
+  min-width: 800px;
   height: auto;
   display: block;
   margin: 0 auto;
@@ -353,22 +367,23 @@ function getSubsectionProgress(sectionId: string, subsectionId: string) {
 /* Connection lines */
 .connection-line {
   stroke: var(--border);
-  stroke-width: 2;
+  stroke-width: 3;
   transition: all .4s ease;
 }
 
 .connection-line.active {
   stroke: var(--realm-color, var(--gold-dim));
-  stroke-opacity: 0.6;
+  stroke-opacity: 0.7;
+  stroke-width: 4;
 }
 
 .center-line {
-  stroke-dasharray: 4 4;
+  stroke-dasharray: 8 8;
 }
 
 .sub-line {
-  stroke-width: 1.5;
-  stroke-dasharray: 2 2;
+  stroke-width: 2.5;
+  stroke-dasharray: 4 4;
 }
 
 /* Center node */
@@ -385,7 +400,7 @@ function getSubsectionProgress(sectionId: string, subsectionId: string) {
 .center-node-level {
   fill: var(--gold);
   font-family: 'Cinzel', serif;
-  font-size: 16px;
+  font-size: 32px;
   font-weight: 700;
   text-anchor: middle;
 }
@@ -393,9 +408,9 @@ function getSubsectionProgress(sectionId: string, subsectionId: string) {
 .center-node-label {
   fill: var(--text-dim);
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 14px;
   text-anchor: middle;
-  letter-spacing: .1em;
+  letter-spacing: .15em;
 }
 
 /* Realm nodes */
@@ -438,13 +453,33 @@ function getSubsectionProgress(sectionId: string, subsectionId: string) {
 }
 
 .realm-node-icon {
-  font-size: 16px;
+  font-size: 32px;
   text-anchor: middle;
   transition: opacity .4s ease;
 }
 
 .realm-node:not(.active) .realm-node-icon {
   opacity: 0.4;
+}
+
+.realm-node-label {
+  fill: var(--text-bright);
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-anchor: middle;
+  transition: opacity .4s ease;
+}
+
+.realm-node:not(.active) .realm-node-label {
+  opacity: 0.5;
+}
+
+.realm-node-count {
+  fill: var(--gold);
+  font-family: 'Crimson Text', serif;
+  font-size: 11px;
+  text-anchor: middle;
 }
 
 /* Subsection nodes */
@@ -485,14 +520,27 @@ function getSubsectionProgress(sectionId: string, subsectionId: string) {
 }
 
 .subsection-node-icon {
-  font-size: 10px;
+  font-size: 20px;
   text-anchor: middle;
+}
+
+.subsection-node-label {
+  fill: var(--text-bright);
+  font-family: 'Crimson Text', serif;
+  font-size: 11px;
+  text-anchor: middle;
+  transition: opacity .4s ease;
+}
+
+.subsection-node:not(.active) .subsection-node-label {
+  opacity: 0.6;
 }
 
 .subsection-node-count {
   fill: var(--gold);
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 10px;
+  font-weight: 600;
   text-anchor: middle;
 }
 
