@@ -118,6 +118,29 @@ export interface Entry {
   notes: string
 }
 
+// Active Quest Types
+export interface QuestProgress {
+  id: string
+  timestamp: string
+  note: string
+  evidence: string[]
+}
+
+export interface ActiveQuest {
+  id: string
+  questId?: string  // Reference to QUESTS array if it's a predefined quest
+  title: string
+  description: string
+  instructions: string
+  section: string
+  subsection: string
+  type: string
+  tier: string
+  image: string
+  startedAt: string
+  progressNotes: QuestProgress[]
+}
+
 // Helper functions
 export function getAvatarStage(level: number) {
   for (let i = AVATAR_STAGES.length - 1; i >= 0; i--) {

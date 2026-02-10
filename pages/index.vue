@@ -99,6 +99,7 @@ const selectedEntry = computed(() => {
         @select-entry="showEntryDetail = $event"
       />
       <ProgressView v-if="view === 'progress'" />
+      <ActiveQuestsView v-if="view === 'active-quests'" />
       <BattleView v-if="view === 'battle'" />
       <ProjectGuide v-if="view === 'guide'" />
     </main>

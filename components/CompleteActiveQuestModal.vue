@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { TYPES, TIERS, type Quest } from '~/composables/constants'
+import { TYPES, TIERS, type ActiveQuest } from '~/composables/constants'
 
 const props = defineProps<{
-  quest: Quest
+  quest: ActiveQuest
 }>()
 
 const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
-const { addEntry, startQuest } = useApp()
+const { completeActiveQuest } = useApp()
 
 const responses = ref(['', '', ''])
 const evidence = ref<string[]>([])
@@ -43,30 +43,8 @@ function removeEvidence(index: number) {
   evidence.value = evidence.value.filter((_, i) => i !== index)
 }
 
-function handleStart() {
-  startQuest({
-    questId: props.quest.id,
-    title: props.quest.title,
-    description: props.quest.description,
-    instructions: '', // Quests don't have instructions yet
-    section: props.quest.section,
-    subsection: props.quest.subsection,
-    type: props.quest.type,
-    tier: props.quest.tier,
-    image: props.quest.image,
-  })
-  emit('close')
-}
-
 function handleComplete() {
-  addEntry({
-    title: props.quest.title,
-    section: props.quest.section,
-    subsection: props.quest.subsection,
-    type: props.quest.type,
-    tier: props.quest.tier,
-    questId: props.quest.id,
-    image: props.quest.image,
+  completeActiveQuest(props.quest.id, {
     responses: responses.value,
     evidence: evidence.value,
     notes: notes.value,
@@ -79,7 +57,7 @@ function handleComplete() {
   <div class="modal-overlay" @click="emit('close')">
     <div class="modal" @click.stop>
       <div class="modal-header">
-        <span class="modal-title">Begin Quest</span>
+        <span class="modal-title">Complete Quest</span>
         <button class="modal-close" @click="emit('close')">×</button>
       </div>
       <div class="modal-body">
@@ -87,13 +65,11 @@ function handleComplete() {
           <QuestImage :image-id="quest.image" />
         </div>
         <h2 class="quest-detail-title">{{ quest.title }}</h2>
-        <p class="quest-detail-desc">{{ quest.description }}</p>
-        <div class="quest-detail-stats">
+
+        <div class="quest-detail-stats" style="margin-bottom: 1.5rem">
           <div class="quest-detail-stat">
-            <div class="quest-detail-stat-value">
-              {{ '★'.repeat(tier?.stars || 1) }}
-            </div>
-            <div class="quest-detail-stat-label">Difficulty</div>
+            <div class="quest-detail-stat-value">{{ type?.icon }}</div>
+            <div class="quest-detail-stat-label">{{ type?.name }}</div>
           </div>
           <div class="quest-detail-stat">
             <div class="quest-detail-stat-value">{{ tier?.name }}</div>
@@ -104,6 +80,7 @@ function handleComplete() {
             <div class="quest-detail-stat-label">XP</div>
           </div>
         </div>
+
         <div v-for="(prompt, i) in type?.prompts" :key="i" class="prompt-field">
           <p class="prompt-q">{{ prompt }}</p>
           <textarea
@@ -112,6 +89,7 @@ function handleComplete() {
             placeholder="Your answer..."
           />
         </div>
+
         <div class="form-section">
           <label class="form-label">Evidence</label>
           <input
@@ -133,21 +111,14 @@ function handleComplete() {
             </div>
           </div>
         </div>
-        <div class="btn-row">
-          <button
-            class="btn btn-secondary"
-            @click="handleStart"
-          >
-            📋 Start Quest
-          </button>
-          <button
-            class="btn btn-primary"
-            :disabled="!canSave"
-            @click="handleComplete"
-          >
-            ⚔️ Complete (+{{ tier?.xp }} XP)
-          </button>
-        </div>
+
+        <button
+          class="btn btn-primary btn-block"
+          :disabled="!canSave"
+          @click="handleComplete"
+        >
+          ⚔️ Complete Quest (+{{ tier?.xp }} XP)
+        </button>
       </div>
     </div>
   </div>

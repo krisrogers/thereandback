@@ -2526,3 +2526,202 @@ body {
   font-size: 1.1rem;
   color: var(--gold-dim);
 }
+
+/* Active Quests View */
+.active-quests-view {
+  padding: 1rem;
+}
+
+.view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.view-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  color: var(--gold);
+}
+
+.quest-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Active Quest Card */
+.active-quest-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all .3s ease;
+  animation: card-appear .4s ease;
+}
+
+.active-quest-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, .1);
+}
+
+.active-quest-header {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: .75rem;
+}
+
+.active-quest-icon {
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+}
+
+.active-quest-icon svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 8px rgba(251, 191, 36, .2));
+}
+
+.active-quest-info {
+  flex: 1;
+}
+
+.active-quest-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  color: var(--text-bright);
+  margin-bottom: .25rem;
+}
+
+.active-quest-desc {
+  color: var(--text-dim);
+  font-size: .9rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.active-quest-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-size: .8rem;
+  color: var(--text-dim);
+  padding-top: .75rem;
+  border-top: 1px solid var(--border);
+}
+
+.active-quest-date {
+  flex: 1;
+}
+
+.active-quest-notes {
+  white-space: nowrap;
+}
+
+/* Quest Detail Modal */
+.modal-wide {
+  max-height: 95vh;
+}
+
+.quest-realm-badge {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+}
+
+.section-header-with-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.empty-journal {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--text-dim);
+  background: var(--bg-card);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+}
+
+.journal-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.journal-entry {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  animation: slide-up .3s ease;
+}
+
+.journal-entry-date {
+  font-size: .75rem;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: .75rem;
+}
+
+.journal-entry-text {
+  color: var(--text);
+  line-height: 1.6;
+  margin-bottom: .75rem;
+  white-space: pre-wrap;
+}
+
+.journal-entry-evidence {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+.journal-entry-img {
+  width: 4rem;
+  height: 4rem;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.journal-entry-img:hover {
+  transform: scale(1.05);
+  border-color: var(--gold);
+}
+
+/* Quest Progress Modal */
+.quest-progress-quest {
+  display: flex;
+  gap: .5rem;
+  padding: .75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  color: var(--text);
+}
+
+/* Button Sizes */
+.btn-sm {
+  padding: .5rem 1rem;
+  font-size: .85rem;
+}
