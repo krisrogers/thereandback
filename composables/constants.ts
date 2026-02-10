@@ -130,3 +130,140 @@ export function getSubsection(sectionId: string, subsectionId: string) {
   const subs = SUBSECTIONS[sectionId]
   return subs?.find(s => s.id === subsectionId)
 }
+
+// Battle System Constants
+export const POWER_UP_TYPES = {
+  workshop: [
+    { id: 'sharpened-blade', name: 'Sharpened Blade', description: 'Your crafted weapons strike true', stat: 'attack', bonus: 3, icon: '⚔️' },
+    { id: 'forged-armor', name: 'Forged Armor', description: 'Armor you made protects well', stat: 'defense', bonus: 2, icon: '🛡️' },
+    { id: 'master-craftwork', name: 'Master Craftwork', description: 'Quality tools aid in battle', stat: 'attack', bonus: 5, icon: '🔨' },
+  ],
+  wilds: [
+    { id: 'wilderness-reflexes', name: 'Wilderness Reflexes', description: 'Survival instincts honed', stat: 'evasion', bonus: 10, icon: '🏃' },
+    { id: 'predator-focus', name: 'Predator Focus', description: 'Strike like nature itself', stat: 'critChance', bonus: 8, icon: '🦅' },
+    { id: 'natural-camouflage', name: 'Natural Camouflage', description: 'Blend and evade danger', stat: 'evasion', bonus: 15, icon: '🍃' },
+  ],
+  shire: [
+    { id: 'hardy-constitution', name: 'Hardy Constitution', description: 'Strong from working the land', stat: 'maxHp', bonus: 20, icon: '💪' },
+    { id: 'living-vigor', name: 'Living Vigor', description: 'Life energy flows through you', stat: 'hpRegen', bonus: 2, icon: '🌱' },
+    { id: 'deep-roots', name: 'Deep Roots', description: 'Grounded and resilient', stat: 'maxHp', bonus: 30, icon: '🌳' },
+  ],
+  hearth: [
+    { id: 'warm-resolve', name: 'Warm Resolve', description: 'Fire tempers your spirit', stat: 'defense', bonus: 3, icon: '🔥' },
+    { id: 'nourishing-feast', name: 'Nourishing Feast', description: 'Good food heals the body', stat: 'healing', bonus: 5, icon: '🍲' },
+    { id: 'hearthstone-ward', name: 'Hearthstone Ward', description: 'Protected by home and hearth', stat: 'defense', bonus: 5, icon: '🏠' },
+  ],
+  library: [
+    { id: 'tactical-knowledge', name: 'Tactical Knowledge', description: 'Study reveals weaknesses', stat: 'accuracy', bonus: 10, icon: '📖' },
+    { id: 'ancient-wisdom', name: 'Ancient Wisdom', description: 'Gain experience faster in battle', stat: 'battleXpMultiplier', bonus: 1.5, icon: '📜' },
+    { id: 'critical-insight', name: 'Critical Insight', description: 'Knowledge of vital points', stat: 'critDamage', bonus: 1.5, icon: '💡' },
+  ],
+} as const
+
+export const ENEMIES = [
+  // Wanderer tier (10 XP)
+  { id: 'goblin', name: 'Goblin Scout', tier: 'wanderer', hp: 30, attack: 3, defense: 1, xp: 10, gold: 5, icon: '👺', description: 'A small but crafty foe' },
+  { id: 'wild-boar', name: 'Wild Boar', tier: 'wanderer', hp: 40, attack: 4, defense: 2, xp: 12, gold: 6, icon: '🐗', description: 'Tough hide and sharp tusks' },
+  // Traveller tier (25 XP)
+  { id: 'bandit', name: 'Highway Bandit', tier: 'traveller', hp: 60, attack: 6, defense: 3, xp: 25, gold: 12, icon: '🗡️', description: 'A seasoned cutthroat' },
+  { id: 'dire-wolf', name: 'Dire Wolf', tier: 'traveller', hp: 70, attack: 7, defense: 2, xp: 28, gold: 14, icon: '🐺', description: 'Hungry and relentless' },
+  // Wayfarer tier (50 XP)
+  { id: 'orc-warrior', name: 'Orc Warrior', tier: 'wayfarer', hp: 100, attack: 10, defense: 5, xp: 50, gold: 25, icon: '⚔️', description: 'Battle-hardened and brutal' },
+  { id: 'marsh-troll', name: 'Marsh Troll', tier: 'wayfarer', hp: 120, attack: 9, defense: 7, xp: 55, gold: 28, icon: '👹', description: 'Slow but incredibly tough' },
+  // Pathfinder tier (100 XP)
+  { id: 'dark-knight', name: 'Dark Knight', tier: 'pathfinder', hp: 150, attack: 15, defense: 10, xp: 100, gold: 50, icon: '⚔️', description: 'Clad in blackened steel' },
+  { id: 'wyvern', name: 'Wyvern', tier: 'pathfinder', hp: 140, attack: 18, defense: 8, xp: 110, gold: 55, icon: '🐉', description: 'Swift and deadly from above' },
+  // Guide tier (200 XP)
+  { id: 'lich-lord', name: 'Lich Lord', tier: 'guide', hp: 200, attack: 22, defense: 15, xp: 200, gold: 100, icon: '💀', description: 'Ancient evil incarnate' },
+  { id: 'dragon', name: 'Ancient Dragon', tier: 'guide', hp: 250, attack: 25, defense: 20, xp: 250, gold: 150, icon: '🐲', description: 'The ultimate challenge' },
+] as const
+
+// Battle types
+export type PowerUp = {
+  id: string
+  name: string
+  description: string
+  stat: 'attack' | 'defense' | 'maxHp' | 'hpRegen' | 'evasion' | 'critChance' | 'critDamage' | 'accuracy' | 'healing' | 'battleXpMultiplier'
+  bonus: number
+  icon: string
+  source?: string // section:subsection:tier
+  timestamp?: string
+}
+
+export type Enemy = typeof ENEMIES[number] & {
+  currentHp?: number
+}
+
+export interface BattleState {
+  currentEnemy: Enemy | null
+  playerHp: number
+  playerMaxHp: number
+  isInBattle: boolean
+  battleLog: string[]
+  defeatedEnemies: string[]
+  gold: number
+  battleXP: number
+  powerUps: PowerUp[]
+}
+
+// Helper functions for battle
+export function getPowerUpForCompletion(section: string, subsection: string, tier: string): PowerUp | null {
+  const powerUpList = POWER_UP_TYPES[section as keyof typeof POWER_UP_TYPES]
+  if (!powerUpList) return null
+
+  // Choose power-up based on tier
+  let index = 0
+  if (tier === 'wanderer' || tier === 'traveller') index = 0
+  else if (tier === 'wayfarer') index = 1
+  else index = 2 // pathfinder or guide
+
+  const template = powerUpList[index]
+  if (!template) return null
+
+  return {
+    ...template,
+    source: `${section}:${subsection}:${tier}`,
+    timestamp: new Date().toISOString(),
+  }
+}
+
+export function calculatePlayerStats(powerUps: PowerUp[]) {
+  const baseStats = {
+    attack: 10,
+    defense: 5,
+    maxHp: 100,
+    hpRegen: 1,
+    evasion: 5,
+    critChance: 10,
+    critDamage: 1.5,
+    accuracy: 85,
+    healing: 0,
+    battleXpMultiplier: 1,
+  }
+
+  const stats = { ...baseStats }
+
+  for (const powerUp of powerUps) {
+    if (powerUp.stat === 'battleXpMultiplier' || powerUp.stat === 'critDamage') {
+      stats[powerUp.stat] += powerUp.bonus
+    } else {
+      stats[powerUp.stat] += powerUp.bonus
+    }
+  }
+
+  return stats
+}
+
+export function getAvailableEnemies(defeatedEnemies: string[]): Enemy[] {
+  // Start with first enemy always available
+  if (defeatedEnemies.length === 0) {
+    return [ENEMIES[0]]
+  }
+
+  // Get all enemies up to the highest defeated + next one
+  const highestDefeatedIndex = Math.max(
+    ...defeatedEnemies.map(id => ENEMIES.findIndex(e => e.id === id))
+  )
+
+  return ENEMIES.slice(0, Math.min(highestDefeatedIndex + 2, ENEMIES.length))
+}
