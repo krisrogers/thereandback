@@ -118,25 +118,27 @@ export interface Entry {
   notes: string
 }
 
-// Project Management Types
-export interface ProgressNote {
+// Active Quest Types
+export interface QuestProgress {
   id: string
   timestamp: string
   note: string
   evidence: string[]
 }
 
-export interface Project {
+export interface ActiveQuest {
   id: string
+  questId?: string  // Reference to QUESTS array if it's a predefined quest
   title: string
-  goal: string
+  description: string
   instructions: string
+  section: string
+  subsection: string
+  type: string
+  tier: string
+  image: string
   startedAt: string
-  status: 'planning' | 'in-progress' | 'completed' | 'paused'
-  progressNotes: ProgressNote[]
-  completedAt?: string
-  section?: string
-  subsection?: string
+  progressNotes: QuestProgress[]
 }
 
 // Helper functions

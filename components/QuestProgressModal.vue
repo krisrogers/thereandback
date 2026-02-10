@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import type { ActiveQuest } from '~/composables/constants'
 
 const props = defineProps<{
-  projectId: string
-  projectTitle: string
+  quest: ActiveQuest
 }>()
 
 const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
-const { addProgressNote } = useApp()
+const { addQuestProgress } = useApp()
 
 const note = ref('')
 const evidence = ref<string[]>([])
@@ -40,7 +40,7 @@ function removeEvidence(index: number) {
 }
 
 function handleSave() {
-  addProgressNote(props.projectId, {
+  addQuestProgress(props.quest.id, {
     note: note.value,
     evidence: evidence.value,
   })
@@ -52,21 +52,21 @@ function handleSave() {
   <div class="modal-overlay" @click="emit('close')">
     <div class="modal" @click.stop>
       <div class="modal-header">
-        <span class="modal-title">Add Progress Note</span>
+        <span class="modal-title">Record Progress</span>
         <button class="modal-close" @click="emit('close')">×</button>
       </div>
       <div class="modal-body">
-        <div class="progress-note-project">
-          <span class="form-label">Project:</span>
-          <span>{{ projectTitle }}</span>
+        <div class="quest-progress-quest">
+          <span class="form-label">Quest:</span>
+          <span>{{ quest.title }}</span>
         </div>
 
         <div class="form-section">
-          <label class="form-label">Progress Update</label>
+          <label class="form-label">Journal Entry</label>
           <textarea
             v-model="note"
             class="form-input form-textarea"
-            placeholder="What progress did you make? What challenges did you face? What's next?"
+            placeholder="What progress did you make? What challenges did you face? What will you try next?"
             rows="5"
             autofocus
           />
@@ -102,7 +102,7 @@ function handleSave() {
           :disabled="!canSave"
           @click="handleSave"
         >
-          Save Note
+          Save Entry
         </button>
       </div>
     </div>

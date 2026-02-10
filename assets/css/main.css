@@ -2527,8 +2527,8 @@ body {
   color: var(--gold-dim);
 }
 
-/* Projects View */
-.projects-view {
+/* Active Quests View */
+.active-quests-view {
   padding: 1rem;
 }
 
@@ -2545,55 +2545,14 @@ body {
   color: var(--gold);
 }
 
-.filter-tabs {
-  display: flex;
-  gap: .5rem;
-  margin-bottom: 1rem;
-  overflow-x: auto;
-  padding-bottom: .5rem;
-}
-
-.filter-tab {
-  padding: .5rem 1rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text-dim);
-  font-size: .85rem;
-  cursor: pointer;
-  transition: all .3s ease;
-  white-space: nowrap;
-}
-
-.filter-tab:hover {
-  border-color: var(--gold-dim);
-  color: var(--text);
-}
-
-.filter-tab.active {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: var(--bg-dark);
-  font-weight: 600;
-}
-
-.projects-section-title {
-  font-family: 'Cinzel', serif;
-  font-size: 1.1rem;
-  color: var(--text);
-  margin: 1.5rem 0 1rem;
-  padding-left: .5rem;
-  border-left: 3px solid var(--gold);
-}
-
-.projects-list {
+.quest-cards {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-/* Project Card */
-.project-card {
+/* Active Quest Card */
+.active-quest-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -2603,51 +2562,44 @@ body {
   animation: card-appear .4s ease;
 }
 
-.project-card:hover {
+.active-quest-card:hover {
   border-color: var(--gold);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(251, 191, 36, .1);
 }
 
-.project-card-header {
+.active-quest-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
   gap: 1rem;
   margin-bottom: .75rem;
 }
 
-.project-card-title {
-  font-family: 'Cinzel', serif;
-  font-size: 1.1rem;
-  color: var(--text-bright);
+.active-quest-icon {
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+}
+
+.active-quest-icon svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 8px rgba(251, 191, 36, .2));
+}
+
+.active-quest-info {
   flex: 1;
 }
 
-.project-card-status {
-  display: flex;
-  align-items: center;
-  gap: .4rem;
-  padding: .3rem .6rem;
-  background: rgba(251, 191, 36, .1);
-  border: 1px solid var(--gold-dim);
-  border-radius: 6px;
+.active-quest-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  color: var(--text-bright);
+  margin-bottom: .25rem;
 }
 
-.project-status-icon {
-  font-size: .9rem;
-}
-
-.project-status-label {
-  font-size: .75rem;
-  color: var(--gold);
-  font-weight: 600;
-}
-
-.project-card-goal {
+.active-quest-desc {
   color: var(--text-dim);
-  font-size: .95rem;
-  margin-bottom: .75rem;
+  font-size: .9rem;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -2655,7 +2607,7 @@ body {
   overflow: hidden;
 }
 
-.project-card-footer {
+.active-quest-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -2666,52 +2618,20 @@ body {
   border-top: 1px solid var(--border);
 }
 
-.project-card-realm {
-  display: flex;
-  align-items: center;
-  gap: .3rem;
+.active-quest-date {
   flex: 1;
 }
 
-.project-card-notes {
+.active-quest-notes {
   white-space: nowrap;
 }
 
-/* Project Detail Modal */
+/* Quest Detail Modal */
 .modal-wide {
   max-height: 95vh;
 }
 
-.project-detail-status {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-}
-
-.project-status-large {
-  font-size: 2rem;
-}
-
-.project-detail-text {
-  background: var(--bg-card);
-  padding: 1rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  line-height: 1.6;
-}
-
-.project-detail-instructions {
-  white-space: pre-wrap;
-  font-family: 'Crimson Text', serif;
-}
-
-.project-detail-realm {
+.quest-realm-badge {
   display: flex;
   align-items: center;
   gap: .5rem;
@@ -2722,14 +2642,14 @@ body {
   color: var(--text);
 }
 
-.project-detail-notes-header {
+.section-header-with-btn {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
 }
 
-.project-detail-empty {
+.empty-journal {
   text-align: center;
   padding: 2rem 1rem;
   color: var(--text-dim);
@@ -2738,13 +2658,13 @@ body {
   border-radius: 8px;
 }
 
-.progress-notes-list {
+.journal-entries {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.progress-note {
+.journal-entry {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -2752,34 +2672,28 @@ body {
   animation: slide-up .3s ease;
 }
 
-.progress-note-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: .75rem;
-}
-
-.progress-note-date {
+.journal-entry-date {
   font-size: .75rem;
   color: var(--gold-dim);
   text-transform: uppercase;
   letter-spacing: .05em;
+  margin-bottom: .75rem;
 }
 
-.progress-note-text {
+.journal-entry-text {
   color: var(--text);
   line-height: 1.6;
   margin-bottom: .75rem;
   white-space: pre-wrap;
 }
 
-.progress-note-evidence {
+.journal-entry-evidence {
   display: flex;
   gap: .5rem;
   flex-wrap: wrap;
 }
 
-.progress-note-img {
+.journal-entry-img {
   width: 4rem;
   height: 4rem;
   object-fit: cover;
@@ -2789,40 +2703,13 @@ body {
   transition: all .2s ease;
 }
 
-.progress-note-img:hover {
+.journal-entry-img:hover {
   transform: scale(1.05);
   border-color: var(--gold);
 }
 
-.project-detail-meta {
-  display: flex;
-  gap: 2rem;
-  padding: 1rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-}
-
-.project-meta-item {
-  display: flex;
-  flex-direction: column;
-  gap: .25rem;
-}
-
-.project-meta-label {
-  font-size: .7rem;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: .1em;
-}
-
-.project-meta-value {
-  font-size: .85rem;
-  color: var(--text);
-}
-
-/* Progress Note Modal */
-.progress-note-project {
+/* Quest Progress Modal */
+.quest-progress-quest {
   display: flex;
   gap: .5rem;
   padding: .75rem 1rem;
@@ -2830,65 +2717,6 @@ body {
   border: 1px solid var(--border);
   border-radius: 8px;
   margin-bottom: 1.5rem;
-  color: var(--text);
-}
-
-/* Status Grid */
-.status-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: .75rem;
-}
-
-.status-btn {
-  padding: 1rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  font-size: .9rem;
-  cursor: pointer;
-  transition: all .3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: .5rem;
-}
-
-.status-btn:hover {
-  border-color: var(--gold-dim);
-  transform: translateY(-2px);
-}
-
-.status-btn.selected {
-  background: rgba(251, 191, 36, .1);
-  border-color: var(--gold);
-  color: var(--gold);
-  font-weight: 600;
-}
-
-/* Form Select */
-.form-select {
-  font-family: 'Crimson Text', Georgia, serif;
-  font-size: 1rem;
-  width: 100%;
-  padding: 1rem;
-  border: 1px solid var(--border);
-  background: var(--bg-card);
-  color: var(--text);
-  border-radius: 12px;
-  transition: all .3s ease;
-  cursor: pointer;
-}
-
-.form-select:focus {
-  outline: none;
-  border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(251, 191, 36, .1);
-}
-
-.form-select option {
-  background: var(--bg-card);
   color: var(--text);
 }
 
