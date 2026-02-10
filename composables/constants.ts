@@ -162,8 +162,8 @@ export const POWER_UP_TYPES = {
 
 export const ENEMIES = [
   // Wanderer tier (10 XP)
-  { id: 'goblin', name: 'Goblin Scout', tier: 'wanderer', hp: 30, attack: 3, defense: 1, xp: 10, gold: 5, icon: '👺', description: 'A small but crafty foe' },
-  { id: 'wild-boar', name: 'Wild Boar', tier: 'wanderer', hp: 40, attack: 4, defense: 2, xp: 12, gold: 6, icon: '🐗', description: 'Tough hide and sharp tusks' },
+  { id: 'goblin', name: 'Goblin Scout', tier: 'wanderer', hp: 40, attack: 4, defense: 2, xp: 10, gold: 5, icon: '👺', description: 'A small but crafty foe' },
+  { id: 'wild-boar', name: 'Wild Boar', tier: 'wanderer', hp: 50, attack: 5, defense: 3, xp: 12, gold: 6, icon: '🐗', description: 'Tough hide and sharp tusks' },
   // Traveller tier (25 XP)
   { id: 'bandit', name: 'Highway Bandit', tier: 'traveller', hp: 60, attack: 6, defense: 3, xp: 25, gold: 12, icon: '🗡️', description: 'A seasoned cutthroat' },
   { id: 'dire-wolf', name: 'Dire Wolf', tier: 'traveller', hp: 70, attack: 7, defense: 2, xp: 28, gold: 14, icon: '🐺', description: 'Hungry and relentless' },
@@ -229,9 +229,9 @@ export function getPowerUpForCompletion(section: string, subsection: string, tie
 
 export function calculatePlayerStats(powerUps: PowerUp[]) {
   const baseStats = {
-    attack: 10,
-    defense: 5,
-    maxHp: 100,
+    attack: 5,
+    defense: 2,
+    maxHp: 80,
     hpRegen: 1,
     evasion: 5,
     critChance: 10,
