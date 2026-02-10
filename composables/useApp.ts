@@ -11,8 +11,8 @@ const isHydrated = ref(false)
 // Battle state
 const battleState = ref<BattleState>({
   currentEnemy: null,
-  playerHp: 100,
-  playerMaxHp: 100,
+  playerHp: 80,
+  playerMaxHp: 80,
   isInBattle: false,
   battleLog: [],
   defeatedEnemies: [],
@@ -162,8 +162,8 @@ export function useApp() {
   const resetBattleState = () => {
     battleState.value = {
       currentEnemy: null,
-      playerHp: 100,
-      playerMaxHp: 100,
+      playerHp: 80,
+      playerMaxHp: 80,
       isInBattle: false,
       battleLog: [],
       defeatedEnemies: [],
