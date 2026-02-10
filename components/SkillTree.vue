@@ -27,284 +27,124 @@ function getRealmXP(sectionId: string) {
     }, 0)
 }
 
-// Tree layout calculations - LARGER for game-like feel
-// Center point
-const centerX = 400
-const centerY = 400
-
-// Realm positions (arranged in a circle around center) - MUCH LARGER
-const realmRadius = 240
-const realmNodeSize = 80
-
-// Subsection positions (branch out from each realm) - MUCH LARGER
-const subsectionRadius = 160
-const subsectionNodeSize = 50
-
-// Calculate realm positions
-const realmPositions = computed(() => {
-  return SECTIONS.map((section, index) => {
-    // Distribute realms evenly in a circle, starting from top
-    const angle = (index * 2 * Math.PI / 5) - Math.PI / 2
-    return {
-      section,
-      x: centerX + Math.cos(angle) * realmRadius,
-      y: centerY + Math.sin(angle) * realmRadius,
-      angle,
-      count: getRealmCount(section.id),
-      xp: getRealmXP(section.id)
-    }
-  })
-})
-
-// Calculate subsection positions
-const subsectionPositions = computed(() => {
-  const positions: Array<{
-    section: typeof SECTIONS[number]
-    subsection: Subsection
-    x: number
-    y: number
-    parentX: number
-    parentY: number
-    count: number
-  }> = []
-
-  realmPositions.value.forEach((realm, realmIndex) => {
-    const subs = SUBSECTIONS[realm.section.id]
-    if (!subs) return
-
-    subs.forEach((sub, subIndex) => {
-      // Spread subsections in an arc around their parent realm
-      const spreadAngle = Math.PI / 3 // 60 degree spread
-      const startAngle = realm.angle - spreadAngle / 2
-      const subAngle = startAngle + (subIndex * spreadAngle / (subs.length - 1 || 1))
-
-      positions.push({
-        section: realm.section,
-        subsection: sub as Subsection,
-        x: realm.x + Math.cos(subAngle) * subsectionRadius,
-        y: realm.y + Math.sin(subAngle) * subsectionRadius,
-        parentX: realm.x,
-        parentY: realm.y,
-        count: getSubsectionCount(realm.section.id, sub.id)
-      })
-    })
-  })
-
-  return positions
-})
-
 // Progress calculation for visual effects
 function getRealmProgress(sectionId: string) {
   const count = getRealmCount(sectionId)
-  // Max out visual at 10 completions
   return Math.min(count / 10, 1)
 }
 
 function getSubsectionProgress(sectionId: string, subsectionId: string) {
   const count = getSubsectionCount(sectionId, subsectionId)
-  // Max out visual at 5 completions
   return Math.min(count / 5, 1)
 }
+
+// Organize data for vertical layout
+const realmData = computed(() => {
+  return SECTIONS.map(section => ({
+    section,
+    count: getRealmCount(section.id),
+    xp: getRealmXP(section.id),
+    progress: getRealmProgress(section.id),
+    subsections: (SUBSECTIONS[section.id] || []).map(sub => ({
+      subsection: sub as Subsection,
+      count: getSubsectionCount(section.id, sub.id),
+      progress: getSubsectionProgress(section.id, sub.id)
+    }))
+  }))
+})
 </script>
 
 <template>
   <div class="skill-tree">
     <div class="skill-tree-header">
-      <h2 class="skill-tree-title">Skill Tree</h2>
-      <p class="skill-tree-subtitle">Explore your journey across all realms</p>
-    </div>
-
-    <div class="tree-container">
-      <svg
-        viewBox="0 0 800 800"
-        class="tree-svg"
-        preserveAspectRatio="xMidYMid meet"
-      >
-        <defs>
-          <!-- Glow filters for active nodes -->
-          <filter id="glow-gold" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-            <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-
-          <!-- Gradient for connections -->
-          <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style="stop-color:#a78b4a;stop-opacity:0.3" />
-            <stop offset="100%" style="stop-color:#a78b4a;stop-opacity:0.1" />
-          </linearGradient>
-
-          <!-- Radial gradients for each realm color -->
-          <radialGradient v-for="section in SECTIONS" :key="`grad-${section.id}`" :id="`grad-${section.id}`">
-            <stop offset="0%" :style="`stop-color:${section.color};stop-opacity:0.8`" />
-            <stop offset="100%" :style="`stop-color:${section.color};stop-opacity:0.4`" />
-          </radialGradient>
-        </defs>
-
-        <!-- Connection lines from center to realms -->
-        <g class="connections-center">
-          <line
-            v-for="realm in realmPositions"
-            :key="`center-line-${realm.section.id}`"
-            :x1="centerX"
-            :y1="centerY"
-            :x2="realm.x"
-            :y2="realm.y"
-            class="connection-line center-line"
-            :class="{ active: realm.count > 0 }"
-            :style="{ '--realm-color': realm.section.color }"
-          />
-        </g>
-
-        <!-- Connection lines from realms to subsections -->
-        <g class="connections-subsections">
-          <line
-            v-for="sub in subsectionPositions"
-            :key="`sub-line-${sub.section.id}-${sub.subsection.id}`"
-            :x1="sub.parentX"
-            :y1="sub.parentY"
-            :x2="sub.x"
-            :y2="sub.y"
-            class="connection-line sub-line"
-            :class="{ active: sub.count > 0 }"
-            :style="{ '--realm-color': sub.section.color }"
-          />
-        </g>
-
-        <!-- Center node (Avatar) -->
-        <g class="center-node" :transform="`translate(${centerX}, ${centerY})`">
-          <circle
-            r="60"
-            class="center-node-bg"
-          />
-          <circle
-            r="56"
-            class="center-node-inner"
-          />
-          <text
-            y="10"
-            class="center-node-level"
-          >{{ level }}</text>
-          <text
-            y="30"
-            class="center-node-label"
-          >LEVEL</text>
-        </g>
-
-        <!-- Subsection nodes -->
-        <g
-          v-for="sub in subsectionPositions"
-          :key="`sub-${sub.section.id}-${sub.subsection.id}`"
-          class="subsection-node"
-          :class="{ active: sub.count > 0, unlocked: getRealmCount(sub.section.id) > 0 }"
-          :transform="`translate(${sub.x}, ${sub.y})`"
-          :style="{ '--realm-color': sub.section.color, '--progress': getSubsectionProgress(sub.section.id, sub.subsection.id) }"
-          @click="emit('select-subsection', sub.section, sub.subsection)"
-        >
-          <circle
-            :r="subsectionNodeSize / 2"
-            class="subsection-node-bg"
-          />
-          <circle
-            :r="subsectionNodeSize / 2 - 2"
-            class="subsection-node-inner"
-          />
-          <text
-            y="6"
-            class="subsection-node-icon"
-          >{{ sub.subsection.icon }}</text>
-          <text
-            y="38"
-            class="subsection-node-label"
-          >{{ sub.subsection.name }}</text>
-          <text
-            v-if="sub.count > 0"
-            y="52"
-            class="subsection-node-count"
-          >{{ sub.count }}</text>
-        </g>
-
-        <!-- Realm nodes (on top of subsections) -->
-        <g
-          v-for="realm in realmPositions"
-          :key="`realm-${realm.section.id}`"
-          class="realm-node"
-          :class="{ active: realm.count > 0 }"
-          :transform="`translate(${realm.x}, ${realm.y})`"
-          :style="{ '--realm-color': realm.section.color, '--progress': getRealmProgress(realm.section.id) }"
-          @click="emit('select-realm', realm.section)"
-        >
-          <circle
-            :r="realmNodeSize / 2 + 6"
-            class="realm-node-glow"
-          />
-          <circle
-            :r="realmNodeSize / 2"
-            class="realm-node-bg"
-          />
-          <circle
-            :r="realmNodeSize / 2 - 3"
-            class="realm-node-inner"
-          />
-          <text
-            y="8"
-            class="realm-node-icon"
-          >{{ realm.section.icon }}</text>
-          <text
-            y="55"
-            class="realm-node-label"
-          >{{ realm.section.name }}</text>
-          <text
-            v-if="realm.count > 0"
-            y="70"
-            class="realm-node-count"
-          >{{ realm.count }} quests</text>
-        </g>
-      </svg>
-
-      <!-- Legend / Stats below tree -->
-      <div class="tree-stats">
-        <div class="tree-stat">
-          <span class="tree-stat-value">{{ totalXP }}</span>
-          <span class="tree-stat-label">Total XP</span>
+      <div class="header-avatar">
+        <div class="avatar-ring">
+          <div class="avatar-inner">
+            <div class="avatar-level">{{ level }}</div>
+          </div>
         </div>
-        <div class="tree-stat">
-          <span class="tree-stat-value">{{ entries.length }}</span>
-          <span class="tree-stat-label">Quests</span>
+        <div class="avatar-label">Level {{ level }}</div>
+      </div>
+      <div class="header-stats">
+        <div class="stat-item">
+          <div class="stat-value">{{ totalXP }}</div>
+          <div class="stat-label">Total XP</div>
         </div>
-        <div class="tree-stat">
-          <span class="tree-stat-value">{{ SECTIONS.filter(s => getRealmCount(s.id) > 0).length }}/5</span>
-          <span class="tree-stat-label">Realms</span>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-value">{{ entries.length }}</div>
+          <div class="stat-label">Quests</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-value">{{ SECTIONS.filter(s => getRealmCount(s.id) > 0).length }}/5</div>
+          <div class="stat-label">Realms</div>
         </div>
       </div>
     </div>
 
-    <!-- Realm cards below tree for detail -->
-    <div class="tree-realms">
+    <div class="realms-list">
       <div
-        v-for="realm in realmPositions"
-        :key="`card-${realm.section.id}`"
-        class="tree-realm-card"
+        v-for="(realm, index) in realmData"
+        :key="realm.section.id"
+        class="realm-branch"
         :class="{ active: realm.count > 0 }"
-        :style="{ '--realm-color': realm.section.color }"
-        @click="emit('select-realm', realm.section)"
+        :style="{
+          '--realm-color': realm.section.color,
+          '--animation-delay': `${index * 0.1}s`
+        }"
       >
-        <div class="tree-realm-icon">{{ realm.section.icon }}</div>
-        <div class="tree-realm-info">
-          <div class="tree-realm-name">{{ realm.section.name }}</div>
-          <div class="tree-realm-progress">
-            <div class="tree-realm-bar">
-              <div
-                class="tree-realm-bar-fill"
-                :style="{ width: `${getRealmProgress(realm.section.id) * 100}%` }"
-              />
+        <!-- Realm Node -->
+        <div
+          class="realm-node"
+          :class="{ active: realm.count > 0 }"
+          @click="emit('select-realm', realm.section)"
+        >
+          <div class="node-glow"></div>
+          <div class="node-border">
+            <div class="node-inner">
+              <div class="node-icon">{{ realm.section.icon }}</div>
             </div>
-            <span class="tree-realm-count">{{ realm.count }}</span>
+          </div>
+          <div class="node-info">
+            <div class="node-title">{{ realm.section.name }}</div>
+            <div class="node-meta">
+              <span v-if="realm.count > 0" class="node-count">{{ realm.count }} quests</span>
+              <span v-else class="node-locked">Unexplored</span>
+              <span v-if="realm.xp > 0" class="node-xp">{{ realm.xp }} XP</span>
+            </div>
+            <div class="node-progress">
+              <div class="progress-bar">
+                <div
+                  class="progress-fill"
+                  :style="{ width: `${realm.progress * 100}%` }"
+                ></div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="tree-realm-xp" v-if="realm.xp > 0">+{{ realm.xp }} XP</div>
+
+        <!-- Subsection Nodes -->
+        <div class="subsections-grid" v-if="realm.subsections.length > 0">
+          <div
+            v-for="sub in realm.subsections"
+            :key="sub.subsection.id"
+            class="subsection-node"
+            :class="{
+              active: sub.count > 0,
+              unlocked: realm.count > 0
+            }"
+            @click="emit('select-subsection', realm.section, sub.subsection)"
+          >
+            <div class="sub-node-border">
+              <div class="sub-node-inner">
+                <div class="sub-node-icon">{{ sub.subsection.icon }}</div>
+              </div>
+            </div>
+            <div class="sub-node-label">{{ sub.subsection.name }}</div>
+            <div v-if="sub.count > 0" class="sub-node-badge">{{ sub.count }}</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -315,366 +155,443 @@ function getSubsectionProgress(sectionId: string, subsectionId: string) {
   animation: slide-up .5s ease;
 }
 
+/* Header */
 .skill-tree-header {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.skill-tree-title {
-  font-family: 'Cinzel', serif;
-  font-size: 1.5rem;
-  color: var(--gold);
-  margin-bottom: .25rem;
-}
-
-.skill-tree-subtitle {
-  font-size: .85rem;
-  color: var(--text-dim);
-}
-
-.tree-container {
-  background: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.05) 0%, transparent 100%);
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
   position: relative;
-  overflow: auto;
-  max-height: 600px;
+  overflow: hidden;
 }
 
-.tree-container::before {
+.skill-tree-header::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(251, 191, 36, .03) 60deg, transparent 120deg);
-  animation: rotate-slow 30s linear infinite;
-}
-
-.tree-svg {
-  width: 100%;
-  min-width: 800px;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
-}
-
-/* Connection lines */
-.connection-line {
-  stroke: var(--border);
-  stroke-width: 3;
-  transition: all .4s ease;
-}
-
-.connection-line.active {
-  stroke: var(--realm-color, var(--gold-dim));
-  stroke-opacity: 0.7;
-  stroke-width: 4;
-}
-
-.center-line {
-  stroke-dasharray: 8 8;
-}
-
-.sub-line {
-  stroke-width: 2.5;
-  stroke-dasharray: 4 4;
-}
-
-/* Center node */
-.center-node-bg {
-  fill: var(--gold);
-  filter: url(#glow-gold);
-  animation: glow-pulse 3s ease-in-out infinite;
-}
-
-.center-node-inner {
-  fill: var(--bg-dark);
-}
-
-.center-node-level {
-  fill: var(--gold);
-  font-family: 'Cinzel', serif;
-  font-size: 32px;
-  font-weight: 700;
-  text-anchor: middle;
-}
-
-.center-node-label {
-  fill: var(--text-dim);
-  font-family: 'Cinzel', serif;
-  font-size: 14px;
-  text-anchor: middle;
-  letter-spacing: .15em;
-}
-
-/* Realm nodes */
-.realm-node {
-  cursor: pointer;
-  transition: transform .3s ease;
-}
-
-.realm-node:hover {
-  transform: scale(1.15);
-}
-
-.realm-node-glow {
-  fill: var(--realm-color);
-  opacity: 0;
-  transition: opacity .4s ease;
-}
-
-.realm-node.active .realm-node-glow {
-  opacity: calc(0.2 + var(--progress, 0) * 0.3);
-  animation: glow-pulse 2s ease-in-out infinite;
-}
-
-.realm-node-bg {
-  fill: var(--border);
-  transition: fill .4s ease;
-}
-
-.realm-node.active .realm-node-bg {
-  fill: var(--realm-color);
-}
-
-.realm-node-inner {
-  fill: var(--bg-card);
-  transition: fill .4s ease;
-}
-
-.realm-node.active .realm-node-inner {
-  fill: var(--bg-dark);
-}
-
-.realm-node-icon {
-  font-size: 32px;
-  text-anchor: middle;
-  transition: opacity .4s ease;
-}
-
-.realm-node:not(.active) .realm-node-icon {
-  opacity: 0.4;
-}
-
-.realm-node-label {
-  fill: var(--text-bright);
-  font-family: 'Cinzel', serif;
-  font-size: 14px;
-  font-weight: 600;
-  text-anchor: middle;
-  transition: opacity .4s ease;
-}
-
-.realm-node:not(.active) .realm-node-label {
-  opacity: 0.5;
-}
-
-.realm-node-count {
-  fill: var(--gold);
-  font-family: 'Crimson Text', serif;
-  font-size: 11px;
-  text-anchor: middle;
-}
-
-/* Subsection nodes */
-.subsection-node {
-  cursor: pointer;
-  transition: transform .3s ease;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
   opacity: 0.3;
 }
 
-.subsection-node.unlocked {
-  opacity: 0.6;
+.header-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-.subsection-node.active {
-  opacity: 1;
+.avatar-ring {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  background: conic-gradient(from 0deg, var(--gold), #f59e0b, var(--gold));
+  border-radius: 50%;
+  padding: 3px;
+  animation: rotate-slow 20s linear infinite;
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
 }
 
-.subsection-node:hover {
-  transform: scale(1.2);
+.avatar-inner {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-dark);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg-card);
 }
 
-.subsection-node-bg {
-  fill: var(--border);
-  transition: fill .4s ease;
-}
-
-.subsection-node.active .subsection-node-bg {
-  fill: var(--realm-color);
-  opacity: calc(0.4 + var(--progress, 0) * 0.6);
-}
-
-.subsection-node-inner {
-  fill: var(--bg-card);
-}
-
-.subsection-node.active .subsection-node-inner {
-  fill: var(--bg-dark);
-}
-
-.subsection-node-icon {
-  font-size: 20px;
-  text-anchor: middle;
-}
-
-.subsection-node-label {
-  fill: var(--text-bright);
-  font-family: 'Crimson Text', serif;
-  font-size: 11px;
-  text-anchor: middle;
-  transition: opacity .4s ease;
-}
-
-.subsection-node:not(.active) .subsection-node-label {
-  opacity: 0.6;
-}
-
-.subsection-node-count {
-  fill: var(--gold);
+.avatar-level {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
-  font-weight: 600;
-  text-anchor: middle;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
 }
 
-/* Tree stats */
-.tree-stats {
+.avatar-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  color: var(--text-bright);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.header-stats {
   display: flex;
   justify-content: center;
-  gap: 2rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border);
-  margin-top: 1rem;
-  position: relative;
-  z-index: 1;
+  align-items: center;
+  gap: 1.5rem;
 }
 
-.tree-stat {
+.stat-item {
   text-align: center;
 }
 
-.tree-stat-value {
-  display: block;
+.stat-value {
   font-family: 'Cinzel', serif;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
+  font-weight: 700;
   color: var(--gold);
+  line-height: 1;
+  margin-bottom: 0.25rem;
 }
 
-.tree-stat-label {
-  font-size: .7rem;
+.stat-label {
+  font-size: 0.7rem;
   color: var(--text-dim);
   text-transform: uppercase;
-  letter-spacing: .1em;
+  letter-spacing: 0.1em;
 }
 
-/* Realm cards */
-.tree-realms {
+.stat-divider {
+  width: 1px;
+  height: 2rem;
+  background: linear-gradient(to bottom, transparent, var(--border), transparent);
+}
+
+/* Realms List */
+.realms-list {
   display: flex;
   flex-direction: column;
-  gap: .75rem;
+  gap: 2rem;
 }
 
-.tree-realm-card {
+.realm-branch {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  animation: fade-in-up 0.5s ease backwards;
+  animation-delay: var(--animation-delay);
+}
+
+/* Realm Nodes */
+.realm-node {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
+  padding: 1.25rem;
   background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  border: 2px solid var(--border);
+  border-radius: 16px;
   cursor: pointer;
-  transition: all .3s ease;
-  opacity: 0.6;
-  animation: card-appear .4s ease backwards;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.tree-realm-card:nth-child(1) { animation-delay: .1s; }
-.tree-realm-card:nth-child(2) { animation-delay: .15s; }
-.tree-realm-card:nth-child(3) { animation-delay: .2s; }
-.tree-realm-card:nth-child(4) { animation-delay: .25s; }
-.tree-realm-card:nth-child(5) { animation-delay: .3s; }
-
-.tree-realm-card.active {
-  opacity: 1;
-  border-left: 3px solid var(--realm-color);
+.realm-node::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--realm-color), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
-.tree-realm-card:hover {
-  background: var(--bg-card-hover);
+.realm-node.active::before {
+  opacity: 0.05;
+}
+
+.realm-node:hover {
   transform: translateX(4px);
   border-color: var(--realm-color);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--realm-color);
 }
 
-.tree-realm-icon {
-  font-size: 1.5rem;
-  width: 2.5rem;
-  height: 2.5rem;
+.realm-node:active {
+  transform: translateX(2px) scale(0.98);
+}
+
+.node-glow {
+  position: absolute;
+  top: 50%;
+  left: 4rem;
+  transform: translateY(-50%);
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, var(--realm-color) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.realm-node.active .node-glow {
+  opacity: 0.15;
+}
+
+.node-border {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--border), transparent);
+  border-radius: 12px;
+  padding: 2px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.realm-node.active .node-border {
+  background: linear-gradient(135deg, var(--realm-color), rgba(255, 255, 255, 0.1));
+  box-shadow: 0 0 20px var(--realm-color);
+}
+
+.node-inner {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-card) 100%);
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, .05);
-  border-radius: 8px;
-  transition: transform .3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.tree-realm-card:hover .tree-realm-icon {
-  transform: scale(1.1);
+.realm-node.active .node-inner {
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-dark) 100%);
+  border-color: var(--realm-color);
 }
 
-.tree-realm-info {
+.node-icon {
+  font-size: 2rem;
+  opacity: 0.4;
+  transition: all 0.3s ease;
+  filter: grayscale(100%);
+}
+
+.realm-node.active .node-icon {
+  opacity: 1;
+  filter: grayscale(0%) drop-shadow(0 0 8px var(--realm-color));
+}
+
+.node-info {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.tree-realm-name {
+.node-title {
   font-family: 'Cinzel', serif;
-  font-size: .9rem;
+  font-size: 1.1rem;
+  font-weight: 600;
   color: var(--text-bright);
-  margin-bottom: .35rem;
+  letter-spacing: 0.02em;
 }
 
-.tree-realm-progress {
+.node-meta {
   display: flex;
   align-items: center;
-  gap: .5rem;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
-.tree-realm-bar {
-  flex: 1;
+.node-count {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.node-locked {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.node-xp {
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  color: var(--gold);
+  padding: 0.15rem 0.5rem;
+  background: rgba(251, 191, 36, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.node-progress {
+  width: 100%;
+}
+
+.progress-bar {
   height: 4px;
   background: var(--bg-dark);
   border-radius: 2px;
   overflow: hidden;
+  border: 1px solid var(--border);
 }
 
-.tree-realm-bar-fill {
+.progress-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--realm-color), var(--gold));
   border-radius: 2px;
-  transition: width .5s ease;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px var(--realm-color);
 }
 
-.tree-realm-count {
-  font-family: 'Cinzel', serif;
-  font-size: .75rem;
-  color: var(--text-dim);
-  min-width: 1.5rem;
-  text-align: right;
+/* Subsections Grid */
+.subsections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+  gap: 1rem;
+  padding-left: 80px;
+  position: relative;
 }
 
-.tree-realm-xp {
-  font-family: 'Cinzel', serif;
-  font-size: .7rem;
-  color: var(--gold);
-  padding: .25rem .5rem;
-  background: rgba(251, 191, 36, .1);
+.subsections-grid::before {
+  content: '';
+  position: absolute;
+  left: 32px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--realm-color), transparent);
+  opacity: 0.3;
+}
+
+.subsection-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  opacity: 0.5;
+}
+
+.subsection-node.unlocked {
+  opacity: 0.7;
+}
+
+.subsection-node.active {
+  opacity: 1;
+  border-color: var(--realm-color);
+}
+
+.subsection-node:hover {
+  transform: translateY(-4px);
+  border-color: var(--realm-color);
+  background: var(--bg-card-hover);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--realm-color);
+}
+
+.subsection-node:active {
+  transform: translateY(-2px) scale(0.95);
+}
+
+.sub-node-border {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--border), transparent);
   border-radius: 10px;
+  padding: 2px;
+  transition: all 0.3s ease;
+}
+
+.subsection-node.active .sub-node-border {
+  background: linear-gradient(135deg, var(--realm-color), rgba(255, 255, 255, 0.1));
+  box-shadow: 0 0 12px var(--realm-color);
+}
+
+.sub-node-inner {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-dark);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.subsection-node.active .sub-node-inner {
+  border-color: var(--realm-color);
+}
+
+.sub-node-icon {
+  font-size: 1.5rem;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.subsection-node.active .sub-node-icon {
+  opacity: 1;
+  filter: drop-shadow(0 0 6px var(--realm-color));
+}
+
+.sub-node-label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-align: center;
+  line-height: 1.2;
+  transition: color 0.3s ease;
+}
+
+.subsection-node.active .sub-node-label {
+  color: var(--text-bright);
+}
+
+.sub-node-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, var(--gold), #f59e0b);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--bg-dark);
+  border: 2px solid var(--bg-card);
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+}
+
+/* Animations */
+@keyframes rotate-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
