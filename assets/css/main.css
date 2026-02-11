@@ -911,6 +911,32 @@ body {
   animation: slide-up .5s ease .2s backwards;
 }
 
+.quest-instructions {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: .5rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  animation: slide-up .5s ease .3s backwards;
+}
+
+.quest-instructions-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  color: var(--gold);
+  margin-bottom: .75rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.quest-instructions-text {
+  color: var(--text);
+  font-size: .95rem;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
 .quest-detail-stats {
   display: flex;
   justify-content: center;
