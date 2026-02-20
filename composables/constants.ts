@@ -73,27 +73,27 @@ export const AVATAR_STAGES = [
 ] as const
 
 export const QUESTS = [
-  { id: 'shield', title: 'Forge a Shield', description: 'Craft a wooden shield with a proper grip', section: 'workshop', subsection: 'woodworking', type: 'build', tier: 'traveller', image: 'shield' },
-  { id: 'sword', title: 'Forge a Sword', description: 'Shape a blade and wrap the grip with cord', section: 'workshop', subsection: 'woodworking', type: 'build', tier: 'traveller', image: 'sword' },
-  { id: 'hookboard', title: 'The Hook Board', description: 'Build a board with hooks for your tools', section: 'workshop', subsection: 'woodworking', type: 'build', tier: 'wanderer', image: 'hookboard' },
-  { id: 'joints', title: 'Test of Joints', description: 'Which is strongest—screw, nail, or glue?', section: 'workshop', subsection: 'woodworking', type: 'experiment', tier: 'wayfarer', image: 'joints' },
-  { id: 'safety', title: 'The Rules of Steel', description: 'Learn and record the safety rules of tools', section: 'workshop', subsection: 'general-making', type: 'observation', tier: 'wanderer', image: 'safety' },
-  { id: 'birdwatch', title: 'Bird Watch', description: 'Find and identify three different birds', section: 'wilds', subsection: 'wildlife', type: 'observation', tier: 'wanderer', image: 'birdwatch' },
-  { id: 'firestart', title: 'Spark to Flame', description: 'Start a fire using natural materials', section: 'wilds', subsection: 'bushcraft', type: 'practice', tier: 'wayfarer', image: 'firestart' },
-  { id: 'bread', title: 'The Daily Bread', description: 'Bake a loaf from scratch', section: 'hearth', subsection: 'baking', type: 'build', tier: 'traveller', image: 'bread' },
-  { id: 'plant', title: 'Seed to Sprout', description: 'Plant seeds and record their growth', section: 'shire', subsection: 'gardening', type: 'project', tier: 'traveller', image: 'plant' },
-  { id: 'map', title: 'Chart the Land', description: 'Draw a map of your surroundings', section: 'library', subsection: 'cartography', type: 'build', tier: 'wayfarer', image: 'map' },
+  { id: 'shield', title: 'Forge a Shield', description: 'Craft a wooden shield with a proper grip', instructions: '1. Choose a flat piece of wood roughly 40cm across.\n2. Cut or sand it into a round or kite shape.\n3. Attach a handle on the back using screws or a wood strip.\n4. Sand the edges smooth so there are no splinters.\n5. Paint or decorate with a personal emblem.', section: 'workshop', subsection: 'woodworking', type: 'build', tier: 'traveller', image: 'shield' },
+  { id: 'sword', title: 'Forge a Sword', description: 'Shape a blade and wrap the grip with cord', instructions: '1. Find a straight piece of timber about 60–70cm long.\n2. Mark out a blade shape and a handle section.\n3. Saw and sand the blade to a flat, tapered profile.\n4. Shape a cross-guard from a small block and attach it.\n5. Wrap the handle tightly with cord or leather strip.\n6. Sand everything smooth and apply oil or paint.', section: 'workshop', subsection: 'woodworking', type: 'build', tier: 'traveller', image: 'sword' },
+  { id: 'hookboard', title: 'The Hook Board', description: 'Build a board with hooks for your tools', instructions: '1. Choose a sturdy board about 50cm wide.\n2. Sand it smooth and mark where each hook will go.\n3. Screw in hooks or pegs at even spacing.\n4. Attach mounting hardware to the back.\n5. Hang it on the workshop wall and organise your tools.', section: 'workshop', subsection: 'woodworking', type: 'build', tier: 'wanderer', image: 'hookboard' },
+  { id: 'joints', title: 'Test of Joints', description: 'Which is strongest—screw, nail, or glue?', instructions: '1. Cut six identical pairs of small wood pieces.\n2. Join two pairs with screws, two with nails, and two with wood glue.\n3. Let any glue dry fully before testing.\n4. Test each joint by pulling, twisting, and bending.\n5. Record which held best and which failed first.\n6. Write down why you think the winner was strongest.', section: 'workshop', subsection: 'woodworking', type: 'experiment', tier: 'wayfarer', image: 'joints' },
+  { id: 'safety', title: 'The Rules of Steel', description: 'Learn and record the safety rules of tools', instructions: '1. Pick three tools you use or want to learn (e.g. saw, drill, chisel).\n2. Research or ask an adult about the safety rules for each.\n3. Write or draw the rules clearly on a card or poster.\n4. Include what protective gear is needed for each tool.\n5. Display the rules in your workshop where you can see them.', section: 'workshop', subsection: 'general-making', type: 'observation', tier: 'wanderer', image: 'safety' },
+  { id: 'birdwatch', title: 'Bird Watch', description: 'Find and identify three different birds', instructions: '1. Choose a spot outdoors where you can sit quietly.\n2. Bring a notebook and pencil (binoculars if you have them).\n3. Sit still for at least 15 minutes and watch for birds.\n4. Sketch or describe each different bird you see.\n5. Use a field guide or app to identify at least three species.\n6. Note their colours, size, call, and behaviour.', section: 'wilds', subsection: 'wildlife', type: 'observation', tier: 'wanderer', image: 'birdwatch' },
+  { id: 'firestart', title: 'Spark to Flame', description: 'Start a fire using natural materials', instructions: '1. Gather tinder (dry grass, bark shavings), kindling (small sticks), and fuel (larger sticks).\n2. Clear a safe fire area on bare ground, away from anything flammable.\n3. Build a small tinder nest and arrange kindling above it.\n4. Use a ferro rod, flint and steel, or friction method to create a spark.\n5. Gently blow on the ember until it catches the tinder.\n6. Feed kindling slowly until you have a stable flame.\n7. Always have water nearby and fully extinguish when done.', section: 'wilds', subsection: 'bushcraft', type: 'practice', tier: 'wayfarer', image: 'firestart' },
+  { id: 'bread', title: 'The Daily Bread', description: 'Bake a loaf from scratch', instructions: '1. Mix 500g flour, 7g yeast, 10g salt, and 325ml warm water.\n2. Knead the dough for about 10 minutes until smooth and elastic.\n3. Cover and let it rise in a warm spot for 1 hour (until doubled).\n4. Punch down, shape into a loaf, and place on a baking tray.\n5. Let it rise again for 30 minutes.\n6. Score the top with a knife and bake at 220°C for 25–30 minutes.\n7. It is done when it sounds hollow when you tap the bottom.', section: 'hearth', subsection: 'baking', type: 'build', tier: 'traveller', image: 'bread' },
+  { id: 'plant', title: 'Seed to Sprout', description: 'Plant seeds and record their growth', instructions: '1. Choose fast-growing seeds (beans, sunflowers, or radishes work well).\n2. Fill small pots with damp potting soil.\n3. Plant seeds at the depth shown on the packet.\n4. Place in a sunny spot and water gently each day.\n5. Measure and sketch or photograph the growth every few days.\n6. Record the date each seedling breaks the surface.', section: 'shire', subsection: 'gardening', type: 'project', tier: 'traveller', image: 'plant' },
+  { id: 'map', title: 'Chart the Land', description: 'Draw a map of your surroundings', instructions: '1. Walk around your area and note landmarks, paths, and features.\n2. Sketch a rough layout on scrap paper while exploring.\n3. Back inside, draw a clean map on good paper.\n4. Add a compass rose showing north.\n5. Include a simple scale and legend for symbols.\n6. Mark important places: home, water, big trees, paths.', section: 'library', subsection: 'cartography', type: 'build', tier: 'wayfarer', image: 'map' },
   // Permaculture quests (child-friendly)
-  { id: 'wormworld', title: 'The Worm\'s World', description: 'Dig up a patch of soil and observe the worms that live there', section: 'shire', subsection: 'composting', type: 'observation', tier: 'wanderer', image: 'wormworld' },
-  { id: 'compost', title: 'Compost Treasure', description: 'Start a kitchen scrap compost and record what goes in', section: 'shire', subsection: 'composting', type: 'build', tier: 'wanderer', image: 'compost' },
-  { id: 'mulch', title: 'The Mulch Blanket', description: 'Gather leaves and straw to mulch around your plants', section: 'shire', subsection: 'gardening', type: 'practice', tier: 'wanderer', image: 'mulch' },
-  { id: 'threesisters', title: 'Three Sisters Garden', description: 'Plant corn, beans, and squash together and watch them help each other grow', section: 'shire', subsection: 'gardening', type: 'project', tier: 'traveller', image: 'threesisters' },
-  { id: 'herbspiral', title: 'The Herb Spiral', description: 'Build a spiral-shaped herb garden with stones and soil', section: 'shire', subsection: 'gardening', type: 'build', tier: 'traveller', image: 'herbspiral' },
-  { id: 'raincatch', title: 'Catch the Rain', description: 'Set up a simple rain collector and measure what you catch', section: 'shire', subsection: 'land-management', type: 'build', tier: 'traveller', image: 'raincatch' },
-  { id: 'bugcensus', title: 'The Bug Census', description: 'Count and identify the insects living in your garden', section: 'wilds', subsection: 'wildlife', type: 'observation', tier: 'wanderer', image: 'bugcensus' },
-  { id: 'patterns', title: 'Nature\'s Patterns', description: 'Find spirals, branches, and webs in the wild and sketch them', section: 'wilds', subsection: 'tracking', type: 'observation', tier: 'wanderer', image: 'patterns' },
-  { id: 'forage', title: 'The Forage Basket', description: 'Find and identify three safe edible wild plants with a guide', section: 'wilds', subsection: 'foraging', type: 'expedition', tier: 'traveller', image: 'forage' },
-  { id: 'gardentable', title: 'Garden to Table', description: 'Pick something you grew and cook a meal with it', section: 'hearth', subsection: 'cooking', type: 'practice', tier: 'traveller', image: 'gardentable' },
+  { id: 'wormworld', title: 'The Worm\'s World', description: 'Dig up a patch of soil and observe the worms that live there', instructions: '1. Choose a damp, shady patch of garden soil.\n2. Use a trowel to carefully dig up a 30cm square, about 15cm deep.\n3. Gently break apart the soil and look for worms.\n4. Count how many you find and note their sizes.\n5. Observe how they move and react to light.\n6. Carefully return all the worms and soil when done.', section: 'shire', subsection: 'composting', type: 'observation', tier: 'wanderer', image: 'wormworld' },
+  { id: 'compost', title: 'Compost Treasure', description: 'Start a kitchen scrap compost and record what goes in', instructions: '1. Find or make a small compost container (a bucket with holes, or a corner of the garden).\n2. Start with a layer of dry leaves, straw, or cardboard.\n3. Add kitchen scraps: fruit peels, veggie ends, eggshells, tea bags.\n4. Avoid meat, dairy, and oily food.\n5. Add a handful of dry material on top each time you add scraps.\n6. Keep a log of what you add and the date.', section: 'shire', subsection: 'composting', type: 'build', tier: 'wanderer', image: 'compost' },
+  { id: 'mulch', title: 'The Mulch Blanket', description: 'Gather leaves and straw to mulch around your plants', instructions: '1. Collect fallen leaves, straw, grass clippings, or wood chips.\n2. Choose a garden bed or some plants that need mulching.\n3. Pull any weeds from around the base of the plants.\n4. Spread a layer of mulch 5–10cm thick around (not touching) the stems.\n5. Water the area after mulching.\n6. Check back in a week and note how the soil feels underneath.', section: 'shire', subsection: 'gardening', type: 'practice', tier: 'wanderer', image: 'mulch' },
+  { id: 'threesisters', title: 'Three Sisters Garden', description: 'Plant corn, beans, and squash together and watch them help each other grow', instructions: '1. Prepare a mound of soil about 30cm high and 60cm across.\n2. Plant 4 corn seeds in the centre of the mound.\n3. When corn is 15cm tall, plant 4 bean seeds around it.\n4. At the same time, plant 2 squash seeds at the edge of the mound.\n5. Water regularly and watch: corn gives beans a pole, beans fix nitrogen, squash shades the soil.\n6. Journal how each plant grows and helps the others.', section: 'shire', subsection: 'gardening', type: 'project', tier: 'traveller', image: 'threesisters' },
+  { id: 'herbspiral', title: 'The Herb Spiral', description: 'Build a spiral-shaped herb garden with stones and soil', instructions: '1. Mark a circle about 1.5m across on the ground.\n2. Lay stones in a spiral shape, building up height toward the centre.\n3. Fill the spiral with soil, higher in the middle.\n4. Plant herbs that like dry conditions near the top (rosemary, thyme).\n5. Plant herbs that like moisture near the bottom (parsley, mint).\n6. Water and label each herb.', section: 'shire', subsection: 'gardening', type: 'build', tier: 'traveller', image: 'herbspiral' },
+  { id: 'raincatch', title: 'Catch the Rain', description: 'Set up a simple rain collector and measure what you catch', instructions: '1. Find a large clean container (bucket or barrel).\n2. Place it under a roof edge or downpipe where rain runs off.\n3. Mark measurement lines on the inside with a waterproof marker.\n4. After each rain, measure and record how much water you collected.\n5. Track rainfall over at least a week.\n6. Calculate how much water your roof catches per storm.', section: 'shire', subsection: 'land-management', type: 'build', tier: 'traveller', image: 'raincatch' },
+  { id: 'bugcensus', title: 'The Bug Census', description: 'Count and identify the insects living in your garden', instructions: '1. Choose a 1m × 1m patch of garden to survey.\n2. Look carefully on leaves, under rocks, in the soil, and on stems.\n3. Catch insects gently in a clear jar to observe them.\n4. Count and sketch or photograph each type you find.\n5. Use a field guide or app to identify as many as you can.\n6. Release all insects where you found them and record your results.', section: 'wilds', subsection: 'wildlife', type: 'observation', tier: 'wanderer', image: 'bugcensus' },
+  { id: 'patterns', title: 'Nature\'s Patterns', description: 'Find spirals, branches, and webs in the wild and sketch them', instructions: '1. Head outdoors with a sketchbook and pencil.\n2. Look for spiral patterns (snail shells, fern fronds, flower centres).\n3. Find branching patterns (trees, rivers, leaf veins, lightning).\n4. Search for web or net patterns (spider webs, honeycomb, cracked mud).\n5. Sketch at least one example of each pattern type.\n6. Label each sketch with where you found it.', section: 'wilds', subsection: 'tracking', type: 'observation', tier: 'wanderer', image: 'patterns' },
+  { id: 'forage', title: 'The Forage Basket', description: 'Find and identify three safe edible wild plants with a guide', instructions: '1. Go with an experienced adult or use a trusted foraging guide.\n2. Walk slowly through a wild or semi-wild area.\n3. Identify at least three edible plants (e.g. dandelion, clover, wild garlic).\n4. Only pick plants you are 100% sure about — when in doubt, leave it.\n5. Collect a small amount of each into a basket.\n6. Note where each plant was growing and what it looked like.', section: 'wilds', subsection: 'foraging', type: 'expedition', tier: 'traveller', image: 'forage' },
+  { id: 'gardentable', title: 'Garden to Table', description: 'Pick something you grew and cook a meal with it', instructions: '1. Harvest something from your garden (herbs, vegetables, or fruit).\n2. Wash everything thoroughly.\n3. Choose a simple recipe that features what you picked.\n4. Prepare and cook the meal (with help if needed).\n5. Serve it and note how it tastes compared to store-bought.\n6. Reflect on the journey from planting to plate.', section: 'hearth', subsection: 'cooking', type: 'practice', tier: 'traveller', image: 'gardentable' },
 ] as const
 
 // Types
@@ -154,139 +154,3 @@ export function getSubsection(sectionId: string, subsectionId: string) {
   return subs?.find(s => s.id === subsectionId)
 }
 
-// Battle System Constants
-export const POWER_UP_TYPES = {
-  workshop: [
-    { id: 'sharpened-blade', name: 'Sharpened Blade', description: 'Your crafted weapons strike true', stat: 'attack', bonus: 3, icon: '⚔️' },
-    { id: 'forged-armor', name: 'Forged Armor', description: 'Armor you made protects well', stat: 'defense', bonus: 2, icon: '🛡️' },
-    { id: 'master-craftwork', name: 'Master Craftwork', description: 'Quality tools aid in battle', stat: 'attack', bonus: 5, icon: '🔨' },
-  ],
-  wilds: [
-    { id: 'wilderness-reflexes', name: 'Wilderness Reflexes', description: 'Survival instincts honed', stat: 'evasion', bonus: 10, icon: '🏃' },
-    { id: 'predator-focus', name: 'Predator Focus', description: 'Strike like nature itself', stat: 'critChance', bonus: 8, icon: '🦅' },
-    { id: 'natural-camouflage', name: 'Natural Camouflage', description: 'Blend and evade danger', stat: 'evasion', bonus: 15, icon: '🍃' },
-  ],
-  shire: [
-    { id: 'hardy-constitution', name: 'Hardy Constitution', description: 'Strong from working the land', stat: 'maxHp', bonus: 20, icon: '💪' },
-    { id: 'living-vigor', name: 'Living Vigor', description: 'Life energy flows through you', stat: 'hpRegen', bonus: 2, icon: '🌱' },
-    { id: 'deep-roots', name: 'Deep Roots', description: 'Grounded and resilient', stat: 'maxHp', bonus: 30, icon: '🌳' },
-  ],
-  hearth: [
-    { id: 'warm-resolve', name: 'Warm Resolve', description: 'Fire tempers your spirit', stat: 'defense', bonus: 3, icon: '🔥' },
-    { id: 'nourishing-feast', name: 'Nourishing Feast', description: 'Good food heals the body', stat: 'healing', bonus: 5, icon: '🍲' },
-    { id: 'hearthstone-ward', name: 'Hearthstone Ward', description: 'Protected by home and hearth', stat: 'defense', bonus: 5, icon: '🏠' },
-  ],
-  library: [
-    { id: 'tactical-knowledge', name: 'Tactical Knowledge', description: 'Study reveals weaknesses', stat: 'accuracy', bonus: 10, icon: '📖' },
-    { id: 'ancient-wisdom', name: 'Ancient Wisdom', description: 'Gain experience faster in battle', stat: 'battleXpMultiplier', bonus: 1.5, icon: '📜' },
-    { id: 'critical-insight', name: 'Critical Insight', description: 'Knowledge of vital points', stat: 'critDamage', bonus: 1.5, icon: '💡' },
-  ],
-} as const
-
-export const ENEMIES = [
-  // Wanderer tier (10 XP)
-  { id: 'goblin', name: 'Goblin Scout', tier: 'wanderer', hp: 40, attack: 4, defense: 2, xp: 10, gold: 5, icon: '👺', description: 'A small but crafty foe' },
-  { id: 'wild-boar', name: 'Wild Boar', tier: 'wanderer', hp: 50, attack: 5, defense: 3, xp: 12, gold: 6, icon: '🐗', description: 'Tough hide and sharp tusks' },
-  // Traveller tier (25 XP)
-  { id: 'bandit', name: 'Highway Bandit', tier: 'traveller', hp: 60, attack: 6, defense: 3, xp: 25, gold: 12, icon: '🗡️', description: 'A seasoned cutthroat' },
-  { id: 'dire-wolf', name: 'Dire Wolf', tier: 'traveller', hp: 70, attack: 7, defense: 2, xp: 28, gold: 14, icon: '🐺', description: 'Hungry and relentless' },
-  // Wayfarer tier (50 XP)
-  { id: 'orc-warrior', name: 'Orc Warrior', tier: 'wayfarer', hp: 100, attack: 10, defense: 5, xp: 50, gold: 25, icon: '⚔️', description: 'Battle-hardened and brutal' },
-  { id: 'marsh-troll', name: 'Marsh Troll', tier: 'wayfarer', hp: 120, attack: 9, defense: 7, xp: 55, gold: 28, icon: '👹', description: 'Slow but incredibly tough' },
-  // Pathfinder tier (100 XP)
-  { id: 'dark-knight', name: 'Dark Knight', tier: 'pathfinder', hp: 150, attack: 15, defense: 10, xp: 100, gold: 50, icon: '⚔️', description: 'Clad in blackened steel' },
-  { id: 'wyvern', name: 'Wyvern', tier: 'pathfinder', hp: 140, attack: 18, defense: 8, xp: 110, gold: 55, icon: '🐉', description: 'Swift and deadly from above' },
-  // Guide tier (200 XP)
-  { id: 'lich-lord', name: 'Lich Lord', tier: 'guide', hp: 200, attack: 22, defense: 15, xp: 200, gold: 100, icon: '💀', description: 'Ancient evil incarnate' },
-  { id: 'dragon', name: 'Ancient Dragon', tier: 'guide', hp: 250, attack: 25, defense: 20, xp: 250, gold: 150, icon: '🐲', description: 'The ultimate challenge' },
-] as const
-
-// Battle types
-export type PowerUp = {
-  id: string
-  name: string
-  description: string
-  stat: 'attack' | 'defense' | 'maxHp' | 'hpRegen' | 'evasion' | 'critChance' | 'critDamage' | 'accuracy' | 'healing' | 'battleXpMultiplier'
-  bonus: number
-  icon: string
-  source?: string // section:subsection:tier
-  timestamp?: string
-}
-
-export type Enemy = typeof ENEMIES[number] & {
-  currentHp?: number
-}
-
-export interface BattleState {
-  currentEnemy: Enemy | null
-  playerHp: number
-  playerMaxHp: number
-  isInBattle: boolean
-  battleLog: string[]
-  defeatedEnemies: string[]
-  gold: number
-  battleXP: number
-  powerUps: PowerUp[]
-}
-
-// Helper functions for battle
-export function getPowerUpForCompletion(section: string, subsection: string, tier: string): PowerUp | null {
-  const powerUpList = POWER_UP_TYPES[section as keyof typeof POWER_UP_TYPES]
-  if (!powerUpList) return null
-
-  // Choose power-up based on tier
-  let index = 0
-  if (tier === 'wanderer' || tier === 'traveller') index = 0
-  else if (tier === 'wayfarer') index = 1
-  else index = 2 // pathfinder or guide
-
-  const template = powerUpList[index]
-  if (!template) return null
-
-  return {
-    ...template,
-    source: `${section}:${subsection}:${tier}`,
-    timestamp: new Date().toISOString(),
-  }
-}
-
-export function calculatePlayerStats(powerUps: PowerUp[]) {
-  const baseStats = {
-    attack: 5,
-    defense: 2,
-    maxHp: 80,
-    hpRegen: 1,
-    evasion: 5,
-    critChance: 10,
-    critDamage: 1.5,
-    accuracy: 85,
-    healing: 0,
-    battleXpMultiplier: 1,
-  }
-
-  const stats = { ...baseStats }
-
-  for (const powerUp of powerUps) {
-    if (powerUp.stat === 'battleXpMultiplier' || powerUp.stat === 'critDamage') {
-      stats[powerUp.stat] += powerUp.bonus
-    } else {
-      stats[powerUp.stat] += powerUp.bonus
-    }
-  }
-
-  return stats
-}
-
-export function getAvailableEnemies(defeatedEnemies: string[]): Enemy[] {
-  // Start with first enemy always available
-  if (defeatedEnemies.length === 0) {
-    return [ENEMIES[0]]
-  }
-
-  // Get all enemies up to the highest defeated + next one
-  const highestDefeatedIndex = Math.max(
-    ...defeatedEnemies.map(id => ENEMIES.findIndex(e => e.id === id))
-  )
-
-  return ENEMIES.slice(0, Math.min(highestDefeatedIndex + 2, ENEMIES.length))
-}

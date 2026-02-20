@@ -48,7 +48,7 @@ function handleStart() {
     questId: props.quest.id,
     title: props.quest.title,
     description: props.quest.description,
-    instructions: '', // Quests don't have instructions yet
+    instructions: props.quest.instructions,
     section: props.quest.section,
     subsection: props.quest.subsection,
     type: props.quest.type,
@@ -88,6 +88,14 @@ function handleComplete() {
         </div>
         <h2 class="quest-detail-title">{{ quest.title }}</h2>
         <p class="quest-detail-desc">{{ quest.description }}</p>
+        <div v-if="quest.instructions" class="quest-instructions">
+          <h3 class="quest-instructions-title">Instructions</h3>
+          <ol class="quest-instructions-list">
+            <li v-for="(step, i) in quest.instructions.split('\n')" :key="i">
+              {{ step.replace(/^\d+\.\s*/, '') }}
+            </li>
+          </ol>
+        </div>
         <div class="quest-detail-stats">
           <div class="quest-detail-stat">
             <div class="quest-detail-stat-value">

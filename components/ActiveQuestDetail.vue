@@ -51,6 +51,15 @@ function formatDate(timestamp: string) {
 
         <p class="quest-detail-desc">{{ quest.description }}</p>
 
+        <div v-if="quest.instructions" class="quest-instructions">
+          <h3 class="quest-instructions-title">Instructions</h3>
+          <ol class="quest-instructions-list">
+            <li v-for="(step, i) in quest.instructions.split('\n')" :key="i">
+              {{ step.replace(/^\d+\.\s*/, '') }}
+            </li>
+          </ol>
+        </div>
+
         <div class="quest-detail-stats">
           <div class="quest-detail-stat">
             <div class="quest-detail-stat-value">
