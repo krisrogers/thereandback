@@ -98,73 +98,112 @@ onBeforeUnmount(() => {
 watch(() => props.locations.length, () => renderMarkers())
 watch(() => props.locations.map(l => l.status).join(','), () => renderMarkers())
 
-function locateMe() {
+function getPosition(options: PositionOptions): Promise<GeolocationPosition> {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, options)
+  })
+}
+
+async function tryGeolocation(): Promise<GeolocationPosition> {
   if (!navigator.geolocation) {
-    status.value = 'Geolocation not supported by this browser'
-    return
+    throw new Error('Geolocation not supported by this browser')
   }
-  status.value = 'Finding your location…'
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      const { latitude, longitude } = pos.coords
-      if (!leafletMap) return
-      leafletMap.setView([latitude, longitude], 12)
-      if (userMarker) leafletMap.removeLayer(userMarker)
-      if (userCircle) leafletMap.removeLayer(userCircle)
-      userMarker = L.circleMarker([latitude, longitude], {
-        radius: 7,
-        color: '#fbbf24',
-        fillColor: '#fbbf24',
-        fillOpacity: 0.9,
-        weight: 2,
-      }).addTo(leafletMap)
-      userCircle = L.circle([latitude, longitude], {
-        radius: pos.coords.accuracy || 100,
-        color: '#fbbf24',
-        fillColor: '#fbbf24',
-        fillOpacity: 0.08,
-        weight: 1,
-      }).addTo(leafletMap)
-      status.value = ''
-    },
-    (err) => {
-      status.value = `Could not find location: ${err.message}`
-    },
-    { enableHighAccuracy: true, timeout: 15000, maximumAge: 60_000 }
-  )
+  // Stage 1: try GPS / high-accuracy with a short timeout
+  try {
+    status.value = 'Finding your location (GPS)…'
+    return await getPosition({ enableHighAccuracy: true, timeout: 6000, maximumAge: 60_000 })
+  } catch (_) {
+    // Fall through to coarse
+  }
+  // Stage 2: coarse / network-based with a longer timeout
+  status.value = 'GPS unavailable — trying network location…'
+  return await getPosition({ enableHighAccuracy: false, timeout: 20000, maximumAge: 10 * 60_000 })
+}
+
+function placeUserMarker(lat: number, lon: number, accuracy: number) {
+  if (!leafletMap) return
+  if (userMarker) leafletMap.removeLayer(userMarker)
+  if (userCircle) leafletMap.removeLayer(userCircle)
+  userMarker = L.circleMarker([lat, lon], {
+    radius: 7,
+    color: '#fbbf24',
+    fillColor: '#fbbf24',
+    fillOpacity: 0.9,
+    weight: 2,
+  }).addTo(leafletMap)
+  userCircle = L.circle([lat, lon], {
+    radius: accuracy || 200,
+    color: '#fbbf24',
+    fillColor: '#fbbf24',
+    fillOpacity: 0.08,
+    weight: 1,
+  }).addTo(leafletMap)
+}
+
+async function locateMe() {
+  isSearching.value = true
+  try {
+    const pos = await tryGeolocation()
+    const { latitude, longitude, accuracy } = pos.coords
+    if (leafletMap) leafletMap.setView([latitude, longitude], 12)
+    placeUserMarker(latitude, longitude, accuracy)
+    status.value = accuracy && accuracy > 1000
+      ? `Found you (approximate, ±${Math.round(accuracy / 1000)}km)`
+      : ''
+  } catch (e: any) {
+    const msg = e?.code === 1
+      ? 'Location permission denied — check browser settings.'
+      : e?.code === 3
+        ? 'Location timed out. Pan the map to your area and use "Search Map Area" instead.'
+        : `Could not find location: ${e?.message || 'unknown error'}`
+    status.value = msg
+  } finally {
+    isSearching.value = false
+  }
+}
+
+async function runOverpassAt(lat: number, lon: number) {
+  status.value = 'Searching for parks, forests, and reserves…'
+  try {
+    const results = await queryOverpass(lat, lon)
+    foundNearby.value = results
+    showFound.value = true
+    status.value = results.length
+      ? `Found ${results.length} place${results.length === 1 ? '' : 's'} nearby`
+      : 'No places found in this area — try moving the map'
+  } catch (e: any) {
+    status.value = `Search failed: ${e.message || 'network error'}`
+  }
 }
 
 async function findNearby() {
-  if (!navigator.geolocation) {
-    status.value = 'Geolocation not supported by this browser'
-    return
-  }
   isSearching.value = true
-  status.value = 'Finding your location…'
-  navigator.geolocation.getCurrentPosition(
-    async (pos) => {
-      const { latitude, longitude } = pos.coords
-      if (leafletMap) leafletMap.setView([latitude, longitude], 11)
-      status.value = 'Searching nearby for parks, forests, and reserves…'
-      try {
-        const results = await queryOverpass(latitude, longitude)
-        foundNearby.value = results
-        showFound.value = true
-        status.value = results.length
-          ? `Found ${results.length} place${results.length === 1 ? '' : 's'} nearby`
-          : 'No places found nearby — try moving the map'
-      } catch (e: any) {
-        status.value = `Search failed: ${e.message || 'network error'}`
-      } finally {
-        isSearching.value = false
-      }
-    },
-    (err) => {
-      isSearching.value = false
-      status.value = `Could not find location: ${err.message}`
-    },
-    { enableHighAccuracy: false, timeout: 15000, maximumAge: 5 * 60_000 }
-  )
+  try {
+    const pos = await tryGeolocation()
+    const { latitude, longitude } = pos.coords
+    if (leafletMap) leafletMap.setView([latitude, longitude], 11)
+    await runOverpassAt(latitude, longitude)
+  } catch (e: any) {
+    const msg = e?.code === 1
+      ? 'Location permission denied. Pan the map and use "Search Map Area".'
+      : e?.code === 3
+        ? 'Location timed out. Pan the map and use "Search Map Area".'
+        : `Could not find location: ${e?.message || 'unknown error'}`
+    status.value = msg
+  } finally {
+    isSearching.value = false
+  }
+}
+
+async function searchMapArea() {
+  if (!leafletMap) return
+  isSearching.value = true
+  try {
+    const c = leafletMap.getCenter()
+    await runOverpassAt(c.lat, c.lng)
+  } finally {
+    isSearching.value = false
+  }
 }
 
 async function queryOverpass(lat: number, lon: number) {
@@ -237,12 +276,15 @@ function addFound(item: { name: string; type: string; lat: number; lon: number; 
         📍 My Location
       </button>
       <button class="btn btn-primary btn-sm" :disabled="isSearching" @click="findNearby">
-        {{ isSearching ? '⏳ Searching…' : '🔍 Find Nearby Parks' }}
+        {{ isSearching ? '⏳ Searching…' : '🔍 Find Nearby' }}
+      </button>
+      <button class="btn btn-secondary btn-sm" :disabled="isSearching" @click="searchMapArea">
+        🎯 Search Map Area
       </button>
     </div>
     <p v-if="status" class="atlas-map-status">{{ status }}</p>
     <p class="atlas-map-hint">
-      Long-press / right-click the map to drop a pin.
+      Long-press / right-click the map to drop a pin. Pan to anywhere and tap "Search Map Area".
     </p>
     <div ref="mapEl" class="atlas-map" />
 

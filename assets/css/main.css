@@ -2573,8 +2573,14 @@ body {
 
 .atlas-map-controls {
   display: flex;
+  flex-wrap: wrap;
   gap: .5rem;
   margin-bottom: .5rem;
+}
+
+.atlas-map-controls .btn {
+  flex: 1 1 auto;
+  white-space: nowrap;
 }
 
 .atlas-map-status {
