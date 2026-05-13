@@ -1,8 +1,10 @@
 import { ref, computed, watch } from 'vue'
-import { TIERS, getAvatarStage, type Entry, type ActiveQuest, type QuestProgress } from './constants'
+import { TIERS, getAvatarStage, type Entry, type ActiveQuest, type QuestProgress, type AtlasLocation, type Expedition } from './constants'
 
 const STORAGE_KEY = 'thereAndBack_v5'
 const ACTIVE_QUESTS_STORAGE_KEY = 'thereAndBack_activeQuests_v1'
+const LOCATIONS_STORAGE_KEY = 'thereAndBack_locations_v1'
+const EXPEDITIONS_STORAGE_KEY = 'thereAndBack_expeditions_v1'
 
 // Global state
 const entries = ref<Entry[]>([])
@@ -11,6 +13,12 @@ const isHydrated = ref(false)
 // Active quests state
 const activeQuests = ref<ActiveQuest[]>([])
 const isActiveQuestsHydrated = ref(false)
+
+// Atlas state
+const locations = ref<AtlasLocation[]>([])
+const isLocationsHydrated = ref(false)
+const expeditions = ref<Expedition[]>([])
+const isExpeditionsHydrated = ref(false)
 
 export function useApp() {
   // Load entries from localStorage on first use (client-side only)
@@ -39,6 +47,32 @@ export function useApp() {
     isActiveQuestsHydrated.value = true
   }
 
+  // Load locations from localStorage
+  if (import.meta.client && !isLocationsHydrated.value) {
+    const stored = localStorage.getItem(LOCATIONS_STORAGE_KEY)
+    if (stored) {
+      try {
+        locations.value = JSON.parse(stored)
+      } catch (e) {
+        console.error('Failed to parse stored locations:', e)
+      }
+    }
+    isLocationsHydrated.value = true
+  }
+
+  // Load expeditions from localStorage
+  if (import.meta.client && !isExpeditionsHydrated.value) {
+    const stored = localStorage.getItem(EXPEDITIONS_STORAGE_KEY)
+    if (stored) {
+      try {
+        expeditions.value = JSON.parse(stored)
+      } catch (e) {
+        console.error('Failed to parse stored expeditions:', e)
+      }
+    }
+    isExpeditionsHydrated.value = true
+  }
+
   // Watch for changes and save to localStorage
   if (import.meta.client) {
     watch(entries, (newEntries) => {
@@ -52,19 +86,37 @@ export function useApp() {
         localStorage.setItem(ACTIVE_QUESTS_STORAGE_KEY, JSON.stringify(newActiveQuests))
       }
     }, { deep: true })
+
+    watch(locations, (newLocations) => {
+      if (isLocationsHydrated.value) {
+        localStorage.setItem(LOCATIONS_STORAGE_KEY, JSON.stringify(newLocations))
+      }
+    }, { deep: true })
+
+    watch(expeditions, (newExpeditions) => {
+      if (isExpeditionsHydrated.value) {
+        localStorage.setItem(EXPEDITIONS_STORAGE_KEY, JSON.stringify(newExpeditions))
+      }
+    }, { deep: true })
   }
 
   const addEntry = (entry: Omit<Entry, 'id' | 'timestamp'>) => {
     const newEntry: Entry = {
       ...entry,
-      id: Date.now().toString(),
+      id: Date.now().toString() + Math.random().toString(36).slice(2, 6),
       timestamp: new Date().toISOString(),
     }
     entries.value = [newEntry, ...entries.value]
+    return newEntry
   }
 
   const deleteEntry = (id: string) => {
     entries.value = entries.value.filter(e => e.id !== id)
+    // Clean up references in expeditions
+    expeditions.value = expeditions.value.map(exp => ({
+      ...exp,
+      questEntryIds: exp.questEntryIds.filter(eid => eid !== id),
+    }))
   }
 
   const totalXP = computed(() => {
@@ -128,6 +180,77 @@ export function useApp() {
     activeQuests.value = activeQuests.value.filter(q => q.id !== questId)
   }
 
+  // Atlas — locations
+  const addLocation = (loc: Omit<AtlasLocation, 'id' | 'createdAt'>) => {
+    const newLoc: AtlasLocation = {
+      ...loc,
+      id: Date.now().toString() + Math.random().toString(36).slice(2, 6),
+      createdAt: new Date().toISOString(),
+    }
+    locations.value = [newLoc, ...locations.value]
+    return newLoc
+  }
+
+  const updateLocation = (id: string, patch: Partial<AtlasLocation>) => {
+    locations.value = locations.value.map(l => l.id === id ? { ...l, ...patch } : l)
+  }
+
+  const deleteLocation = (id: string) => {
+    locations.value = locations.value.filter(l => l.id !== id)
+    // Detach from any expeditions
+    expeditions.value = expeditions.value.map(exp => ({
+      ...exp,
+      locationIds: exp.locationIds.filter(lid => lid !== id),
+    }))
+  }
+
+  const markLocationVisited = (id: string, visited: boolean) => {
+    locations.value = locations.value.map(l =>
+      l.id === id
+        ? {
+            ...l,
+            status: visited ? 'visited' : 'wishlist',
+            visitedAt: visited ? (l.visitedAt || new Date().toISOString()) : undefined,
+          }
+        : l
+    )
+  }
+
+  // Atlas — expeditions
+  const addExpedition = (exp: Omit<Expedition, 'id' | 'createdAt' | 'questEntryIds'> & { questEntryIds?: string[] }) => {
+    const newExp: Expedition = {
+      ...exp,
+      questEntryIds: exp.questEntryIds || [],
+      id: Date.now().toString() + Math.random().toString(36).slice(2, 6),
+      createdAt: new Date().toISOString(),
+    }
+    expeditions.value = [newExp, ...expeditions.value]
+    // Auto-mark visited any wishlist locations included
+    exp.locationIds.forEach(lid => {
+      const loc = locations.value.find(l => l.id === lid)
+      if (loc && loc.status === 'wishlist') {
+        markLocationVisited(lid, true)
+      }
+    })
+    return newExp
+  }
+
+  const updateExpedition = (id: string, patch: Partial<Expedition>) => {
+    expeditions.value = expeditions.value.map(e => e.id === id ? { ...e, ...patch } : e)
+  }
+
+  const deleteExpedition = (id: string) => {
+    expeditions.value = expeditions.value.filter(e => e.id !== id)
+  }
+
+  const linkEntryToExpedition = (expeditionId: string, entryId: string) => {
+    expeditions.value = expeditions.value.map(e =>
+      e.id === expeditionId && !e.questEntryIds.includes(entryId)
+        ? { ...e, questEntryIds: [...e.questEntryIds, entryId] }
+        : e
+    )
+  }
+
   return {
     entries,
     addEntry,
@@ -143,5 +266,16 @@ export function useApp() {
     addQuestProgress,
     completeActiveQuest,
     abandonQuest,
+    // Atlas
+    locations,
+    addLocation,
+    updateLocation,
+    deleteLocation,
+    markLocationVisited,
+    expeditions,
+    addExpedition,
+    updateExpedition,
+    deleteExpedition,
+    linkEntryToExpedition,
   }
 }
