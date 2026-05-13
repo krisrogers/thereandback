@@ -111,7 +111,7 @@ async function tryGeolocation(): Promise<GeolocationPosition> {
   // Stage 1: try GPS / high-accuracy with a short timeout
   try {
     status.value = 'Finding your location (GPS)…'
-    return await getPosition({ enableHighAccuracy: true, timeout: 6000, maximumAge: 60_000 })
+    return await getPosition({ enableHighAccuracy: true, timeout: 30000, maximumAge: 60_000 })
   } catch (_) {
     // Fall through to coarse
   }
