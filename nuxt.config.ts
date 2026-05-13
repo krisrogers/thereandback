@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
-  css: ['~/assets/css/main.css'],
+  css: ['leaflet/dist/leaflet.css', '~/assets/css/main.css'],
   app: {
     baseURL: process.env.NUXT_APP_BASE_URL || '/',
     head: {

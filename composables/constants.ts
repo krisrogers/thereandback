@@ -123,10 +123,56 @@ export interface Entry {
   type: string
   tier: string
   questId?: string
+  expeditionId?: string
   image: string
   responses: string[]
   evidence: string[]
   notes: string
+}
+
+// Atlas — locations and expeditions
+export const LOCATION_TYPES = [
+  { id: 'national-park', name: 'National Park', icon: '🏞️', color: '#22c55e' },
+  { id: 'state-forest', name: 'State Forest', icon: '🌲', color: '#16a34a' },
+  { id: 'nature-reserve', name: 'Nature Reserve', icon: '🦌', color: '#84cc16' },
+  { id: 'park', name: 'Park', icon: '🌳', color: '#65a30d' },
+  { id: 'trail', name: 'Trail', icon: '🥾', color: '#a16207' },
+  { id: 'beach', name: 'Beach / Coast', icon: '🏖️', color: '#0ea5e9' },
+  { id: 'lookout', name: 'Lookout', icon: '🔭', color: '#8b5cf6' },
+  { id: 'waterway', name: 'Waterway', icon: '🏞️', color: '#0284c7' },
+  { id: 'geocache', name: 'Geocache', icon: '📦', color: '#fbbf24' },
+  { id: 'other', name: 'Other', icon: '📍', color: '#94a3b8' },
+] as const
+
+export type LocationType = typeof LOCATION_TYPES[number]
+
+export interface AtlasLocation {
+  id: string
+  name: string
+  type: string
+  lat: number
+  lon: number
+  notes: string
+  status: 'wishlist' | 'visited'
+  source: 'manual' | 'overpass'
+  osmRef?: string
+  geocacheCode?: string
+  createdAt: string
+  visitedAt?: string
+}
+
+export interface Expedition {
+  id: string
+  title: string
+  date: string
+  locationIds: string[]
+  notes: string
+  questEntryIds: string[]
+  createdAt: string
+}
+
+export function getLocationType(typeId: string) {
+  return LOCATION_TYPES.find(t => t.id === typeId) || LOCATION_TYPES[LOCATION_TYPES.length - 1]
 }
 
 // Active Quest Types

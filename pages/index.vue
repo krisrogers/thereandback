@@ -101,6 +101,7 @@ const selectedEntry = computed(() => {
       <ProgressView v-if="view === 'progress'" />
       <ActiveQuestsView v-if="view === 'active-quests'" />
       <ProjectGuide v-if="view === 'guide'" />
+      <AtlasView v-if="view === 'atlas'" />
     </main>
 
     <QuestModal
