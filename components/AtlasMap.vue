@@ -14,8 +14,24 @@ const emit = defineEmits<{
 const mapEl = ref<HTMLDivElement | null>(null)
 const status = ref<string>('')
 const isSearching = ref(false)
-const foundNearby = ref<Array<{ name: string; type: string; lat: number; lon: number; osmRef: string }>>([])
+
+interface FoundPlace {
+  name: string
+  type: string
+  lat: number
+  lon: number
+  osmRef: string
+  distanceKm: number
+  description?: string
+  website?: string
+  wikipedia?: string
+  operator?: string
+}
+
+const foundNearby = ref<FoundPlace[]>([])
 const showFound = ref(false)
+const expandedFound = ref<string | null>(null)
+const searchOrigin = ref<{ lat: number; lon: number } | null>(null)
 
 let leafletMap: any = null
 let L: any = null
@@ -164,6 +180,8 @@ async function locateMe() {
 
 async function runOverpassAt(lat: number, lon: number) {
   status.value = 'Searching for parks, forests, and reserves…'
+  searchOrigin.value = { lat, lon }
+  expandedFound.value = null
   try {
     const results = await queryOverpass(lat, lon)
     foundNearby.value = results
@@ -174,6 +192,48 @@ async function runOverpassAt(lat: number, lon: number) {
   } catch (e: any) {
     status.value = `Search failed: ${e.message || 'network error'}`
   }
+}
+
+function haversineKm(a: { lat: number; lon: number }, b: { lat: number; lon: number }): number {
+  const R = 6371
+  const toRad = (d: number) => (d * Math.PI) / 180
+  const dLat = toRad(b.lat - a.lat)
+  const dLon = toRad(b.lon - a.lon)
+  const lat1 = toRad(a.lat)
+  const lat2 = toRad(b.lat)
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2
+  return 2 * R * Math.asin(Math.sqrt(h))
+}
+
+function formatDistance(km: number): string {
+  if (km < 1) return `${Math.round(km * 1000)} m`
+  if (km < 10) return `${km.toFixed(1)} km`
+  return `${Math.round(km)} km`
+}
+
+function wikipediaUrl(item: FoundPlace): string | null {
+  if (!item.wikipedia) return null
+  const m = item.wikipedia.match(/^([a-z-]+):(.+)$/)
+  if (!m) return null
+  const [, lang, article] = m
+  return `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(article.replace(/ /g, '_'))}`
+}
+
+function googleMapsUrl(item: FoundPlace): string {
+  return `https://www.google.com/maps/search/?api=1&query=${item.lat}%2C${item.lon}`
+}
+
+function osmUrl(item: FoundPlace): string {
+  return `https://www.openstreetmap.org/${item.osmRef}`
+}
+
+function toggleExpanded(osmRef: string) {
+  expandedFound.value = expandedFound.value === osmRef ? null : osmRef
+}
+
+function focusOnMap(item: FoundPlace) {
+  if (!leafletMap) return
+  leafletMap.setView([item.lat, item.lon], Math.max(leafletMap.getZoom(), 13))
 }
 
 async function findNearby() {
@@ -230,7 +290,7 @@ async function queryOverpass(lat: number, lon: number) {
   if (!res.ok) throw new Error(`Overpass ${res.status}`)
   const data = await res.json()
   const seen = new Set<string>()
-  const out: Array<{ name: string; type: string; lat: number; lon: number; osmRef: string }> = []
+  const out: FoundPlace[] = []
   for (const el of data.elements || []) {
     const tags = el.tags || {}
     const name = tags.name || tags['official_name'] || tags['short_name']
@@ -247,18 +307,27 @@ async function queryOverpass(lat: number, lon: number) {
     const latC = el.lat ?? el.center?.lat
     const lonC = el.lon ?? el.center?.lon
     if (latC == null || lonC == null) continue
-    out.push({ name, type, lat: latC, lon: lonC, osmRef })
+    out.push({
+      name,
+      type,
+      lat: latC,
+      lon: lonC,
+      osmRef,
+      distanceKm: haversineKm({ lat, lon }, { lat: latC, lon: lonC }),
+      description: tags.description || undefined,
+      website: tags.website || tags['contact:website'] || undefined,
+      wikipedia: tags.wikipedia || undefined,
+      operator: tags.operator || undefined,
+    })
   }
+  out.sort((a, b) => a.distanceKm - b.distanceKm)
   return out.slice(0, 50)
 }
 
-function addFound(item: { name: string; type: string; lat: number; lon: number; osmRef: string }) {
+function addFound(item: FoundPlace) {
   emit('add-at', { lat: item.lat, lon: item.lon })
-  // Caller (AtlasView) opens the Add modal with these coords; the user confirms there.
-  // Remove from list so it's clearer what's left.
   foundNearby.value = foundNearby.value.filter(f => f.osmRef !== item.osmRef)
-  // We can't auto-populate the name from here without a richer event; user fills name in modal.
-  // To improve UX we re-emit with the name attached via a sessionStorage handshake:
+  if (expandedFound.value === item.osmRef) expandedFound.value = null
   try {
     sessionStorage.setItem('atlas_pending_name', item.name)
     sessionStorage.setItem('atlas_pending_type', item.type)
@@ -298,15 +367,38 @@ function addFound(item: { name: string; type: string; lat: number; lon: number; 
           v-for="item in foundNearby"
           :key="item.osmRef"
           class="atlas-found-item"
+          :class="{ expanded: expandedFound === item.osmRef }"
         >
-          <div class="atlas-found-icon" :style="{ background: getLocationType(item.type).color + '33' }">
-            {{ getLocationType(item.type).icon }}
+          <div class="atlas-found-row" @click="toggleExpanded(item.osmRef)">
+            <div class="atlas-found-icon" :style="{ background: getLocationType(item.type).color + '33' }">
+              {{ getLocationType(item.type).icon }}
+            </div>
+            <div class="atlas-found-info">
+              <div class="atlas-found-name">{{ item.name }}</div>
+              <div class="atlas-found-type">
+                <span>{{ getLocationType(item.type).name }}</span>
+                <span class="atlas-found-distance">· {{ formatDistance(item.distanceKm) }}</span>
+              </div>
+            </div>
+            <span class="atlas-found-chevron">{{ expandedFound === item.osmRef ? '▾' : '▸' }}</span>
           </div>
-          <div class="atlas-found-info">
-            <div class="atlas-found-name">{{ item.name }}</div>
-            <div class="atlas-found-type">{{ getLocationType(item.type).name }}</div>
+          <div v-if="expandedFound === item.osmRef" class="atlas-found-detail">
+            <p v-if="item.description" class="atlas-found-desc">{{ item.description }}</p>
+            <div v-if="item.operator" class="atlas-found-meta">
+              <span class="atlas-found-meta-label">Managed by</span>
+              <span>{{ item.operator }}</span>
+            </div>
+            <div class="atlas-found-links">
+              <a v-if="item.website" :href="item.website" target="_blank" rel="noopener">🌐 Website</a>
+              <a v-if="wikipediaUrl(item)" :href="wikipediaUrl(item)!" target="_blank" rel="noopener">📖 Wikipedia</a>
+              <a :href="googleMapsUrl(item)" target="_blank" rel="noopener">⭐ Google Maps (reviews)</a>
+              <a :href="osmUrl(item)" target="_blank" rel="noopener">🗺️ OpenStreetMap</a>
+            </div>
+            <div class="atlas-found-actions">
+              <button class="btn btn-secondary btn-sm" @click.stop="focusOnMap(item)">🎯 Show on Map</button>
+              <button class="btn btn-primary btn-sm" @click.stop="addFound(item)">+ Add to Atlas</button>
+            </div>
           </div>
-          <button class="btn btn-secondary btn-sm" @click="addFound(item)">+ Add</button>
         </div>
       </div>
     </div>
