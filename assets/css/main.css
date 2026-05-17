@@ -2750,14 +2750,24 @@ body {
 }
 
 .atlas-found-item {
+  border-radius: 8px;
+  overflow: hidden;
+  transition: background .15s;
+}
+
+.atlas-found-item.expanded {
+  background: var(--bg-card-hover);
+}
+
+.atlas-found-row {
   display: flex;
   align-items: center;
   gap: .5rem;
   padding: .5rem;
-  border-radius: 8px;
+  cursor: pointer;
 }
 
-.atlas-found-item:hover {
+.atlas-found-row:hover {
   background: var(--bg-card-hover);
 }
 
@@ -2788,6 +2798,82 @@ body {
 .atlas-found-type {
   color: var(--text-dim);
   font-size: .75rem;
+  display: flex;
+  gap: .35rem;
+  align-items: center;
+}
+
+.atlas-found-distance {
+  color: var(--gold-dim);
+  font-weight: 600;
+}
+
+.atlas-found-chevron {
+  color: var(--gold-dim);
+  font-size: .9rem;
+  flex-shrink: 0;
+  padding: 0 .25rem;
+}
+
+.atlas-found-detail {
+  padding: 0 .75rem .75rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.atlas-found-desc {
+  margin: 0;
+  font-size: .85rem;
+  color: var(--text);
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.atlas-found-meta {
+  display: flex;
+  gap: .35rem;
+  font-size: .75rem;
+  color: var(--text-dim);
+}
+
+.atlas-found-meta-label {
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--gold-dim);
+  font-weight: 600;
+}
+
+.atlas-found-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+}
+
+.atlas-found-links a {
+  font-size: .8rem;
+  padding: .25rem .55rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--gold);
+  text-decoration: none;
+  transition: all .15s;
+}
+
+.atlas-found-links a:hover {
+  border-color: var(--gold);
+  background: rgba(251, 191, 36, .08);
+}
+
+.atlas-found-actions {
+  display: flex;
+  gap: .5rem;
+  margin-top: .25rem;
+}
+
+.atlas-found-actions .btn {
+  flex: 1;
 }
 
 /* Location modal extras */
